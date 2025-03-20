@@ -8,13 +8,15 @@ import { HttpClientModule } from '@angular/common/http';
 import { SignupComponent } from './signup/signup.component';
 import { LoginComponent } from './login/login.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { MoviedetailsComponent } from './moviedetails/moviedetails.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomepageComponent,
     SignupComponent,
-    LoginComponent
+    LoginComponent,
+    MoviedetailsComponent
   ],
   imports: [
     BrowserModule,

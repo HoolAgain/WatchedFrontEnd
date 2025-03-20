@@ -11,10 +11,11 @@
 <h2>Movie List</h2>
 
 <div class="movie-grid">
-  <div class="movie-card" *ngFor="let movie of movies">
+  <div class="movie-card" *ngFor="let movie of movies" [routerLink]="['/details', movie.movieId]">
     <img [src]="movie.posterUrl" alt="{{ movie.title }}">
     <h3>{{ movie.title }} ({{ movie.year }})</h3>
     <p><strong>Genre:</strong> {{ movie.genre }}</p>
     <p><strong>Director:</strong> {{ movie.director }}</p>
+    <p><strong>Rating:</strong> {{ movie.averageRating}}/10</p>
   </div>
 </div>
