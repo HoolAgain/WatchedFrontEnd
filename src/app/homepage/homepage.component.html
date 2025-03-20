@@ -1,0 +1,20 @@
+<nav class="navbar">
+  <h1>Watched Movies</h1>
+  <div class="nav-buttons">
+    <a href="/signup">Sign Up</a>
+    <a href="/login">Login</a>
+  </div>
+</nav>
+
+
+
+<h2>Movie List</h2>
+
+<div class="movie-grid">
+  <div class="movie-card" *ngFor="let movie of movies">
+    <img [src]="movie.posterUrl" alt="{{ movie.title }}">
+    <h3>{{ movie.title }} ({{ movie.year }})</h3>
+    <p><strong>Genre:</strong> {{ movie.genre }}</p>
+    <p><strong>Director:</strong> {{ movie.director }}</p>
+  </div>
+</div>
