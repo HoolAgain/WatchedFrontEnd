@@ -213,9 +213,12 @@ function assertProducerNode(node) {
 function isConsumerNode(node) {
   return node.producerNode !== void 0;
 }
-function createComputed(computation) {
+function createComputed(computation, equal) {
   const node = Object.create(COMPUTED_NODE);
   node.computation = computation;
+  if (equal !== void 0) {
+    node.equal = equal;
+  }
   const computed2 = () => {
     producerUpdateValueVersion(node);
     producerAccessed(node);
@@ -279,9 +282,12 @@ function setThrowInvalidWriteToSignalError(fn) {
   throwInvalidWriteToSignalErrorFn = fn;
 }
 var postSignalSetFn = null;
-function createSignal(initialValue) {
+function createSignal(initialValue, equal) {
   const node = Object.create(SIGNAL_NODE);
   node.value = initialValue;
+  if (equal !== void 0) {
+    node.equal = equal;
+  }
   const getter = () => {
     producerAccessed(node);
     return node.value;
@@ -453,6 +459,14 @@ var WATCH_NODE = (() => {
     cleanupFn: NOOP_CLEANUP_FN
   });
 })();
+function untracked(nonReactiveReadsFn) {
+  const prevConsumer = setActiveConsumer(null);
+  try {
+    return nonReactiveReadsFn();
+  } finally {
+    setActiveConsumer(prevConsumer);
+  }
+}
 
 // node_modules/@angular/core/fesm2022/primitives/di.mjs
 var _currentInjector = void 0;
@@ -1590,7 +1604,12 @@ function createInputSignal(initialValue, options) {
   function inputValueFn() {
     producerAccessed(node);
     if (node.value === REQUIRED_UNSET_VALUE) {
-      throw new RuntimeError(-950, ngDevMode && "Input is required but no value is available yet.");
+      let message = null;
+      if (ngDevMode) {
+        const name = options?.debugName ?? options?.alias;
+        message = `Input${name ? ` "${name}"` : ""} is required but no value is available yet.`;
+      }
+      throw new RuntimeError(-950, message);
     }
     return node.value;
   }
@@ -5796,11 +5815,8 @@ function ɵunwrapWritableSignal(value) {
   return null;
 }
 function signal(initialValue, options) {
-  const signalFn = createSignal(initialValue);
+  const signalFn = createSignal(initialValue, options?.equal);
   const node = signalFn[SIGNAL];
-  if (options?.equal) {
-    node.equal = options.equal;
-  }
   signalFn.set = (newValue) => signalSetFn(node, newValue);
   signalFn.update = (updateFn) => signalUpdateFn(node, updateFn);
   signalFn.asReadonly = signalAsReadonlyFn.bind(signalFn);
@@ -7669,6 +7685,31 @@ function processBlockData(injector) {
     blockDetails.set(blockId, createBlockSummary(blockData[blockId]));
   }
   return blockDetails;
+}
+function isSsrContentsIntegrity(node) {
+  return !!node && node.nodeType === Node.COMMENT_NODE && node.textContent?.trim() === SSR_CONTENT_INTEGRITY_MARKER;
+}
+function skipTextNodes(node) {
+  while (node && node.nodeType === Node.TEXT_NODE) {
+    node = node.previousSibling;
+  }
+  return node;
+}
+function verifySsrContentsIntegrity(doc) {
+  for (const node of doc.body.childNodes) {
+    if (isSsrContentsIntegrity(node)) {
+      return;
+    }
+  }
+  const beforeBody = skipTextNodes(doc.body.previousSibling);
+  if (isSsrContentsIntegrity(beforeBody)) {
+    return;
+  }
+  let endOfHead = skipTextNodes(doc.head.lastChild);
+  if (isSsrContentsIntegrity(endOfHead)) {
+    return;
+  }
+  throw new RuntimeError(-507, typeof ngDevMode !== "undefined" && ngDevMode && "Angular hydration logic detected that HTML content of this page was modified after it was produced during server side rendering. Make sure that there are no optimizations that remove comment nodes from HTML enabled on your CDN. Angular hydration relies on HTML produced by the server, including whitespaces and comment nodes.");
 }
 function refreshContentQueries(tView, lView) {
   const contentQueries = tView.contentQueries;
@@ -12703,7 +12744,7 @@ var ComponentFactory2 = class extends ComponentFactory$1 {
     try {
       const cmpDef = this.componentDef;
       ngDevMode && verifyNotAnOrphanComponent(cmpDef);
-      const tAttributes = rootSelectorOrNode ? ["ng-version", "19.2.2"] : (
+      const tAttributes = rootSelectorOrNode ? ["ng-version", "19.2.3"] : (
         // Extract attributes and classes from the first selector only to match VE behavior.
         extractAttrsAndClassesFromSelector(this.componentDef.selectors[0])
       );
@@ -14592,8 +14633,9 @@ function onTimer(delay) {
 }
 function scheduleTimerTrigger(delay, callback, injector) {
   const scheduler = injector.get(TimerScheduler);
+  const ngZone = injector.get(NgZone);
   const cleanupFn = () => scheduler.remove(callback);
-  scheduler.add(delay, callback);
+  scheduler.add(delay, callback, ngZone);
   return cleanupFn;
 }
 var TimerScheduler = class _TimerScheduler {
@@ -14614,10 +14656,10 @@ var TimerScheduler = class _TimerScheduler {
   // the current callback invocation. The shape of this list is the same
   // as the shape of the `current` list.
   deferred = [];
-  add(delay, callback) {
+  add(delay, callback, ngZone) {
     const target = this.executingCallbacks ? this.deferred : this.current;
     this.addToQueue(target, Date.now() + delay, callback);
-    this.scheduleTimer();
+    this.scheduleTimer(ngZone);
   }
   remove(callback) {
     const {
@@ -14657,7 +14699,7 @@ var TimerScheduler = class _TimerScheduler {
     }
     return index;
   }
-  scheduleTimer() {
+  scheduleTimer(ngZone) {
     const callback = () => {
       this.clearTimeout();
       this.executingCallbacks = true;
@@ -14693,7 +14735,7 @@ var TimerScheduler = class _TimerScheduler {
         }
         this.deferred.length = 0;
       }
-      this.scheduleTimer();
+      this.scheduleTimer(ngZone);
     };
     const FRAME_DURATION_MS = 16;
     if (this.current.length > 0) {
@@ -14706,7 +14748,9 @@ var TimerScheduler = class _TimerScheduler {
         this.clearTimeout();
         const timeout = Math.max(invokeAt - now, FRAME_DURATION_MS);
         this.invokeTimerAt = invokeAt;
-        this.timeoutId = setTimeout(callback, timeout);
+        this.timeoutId = ngZone.runOutsideAngular(() => {
+          return setTimeout(() => ngZone.run(callback), timeout);
+        });
       }
     }
   }
@@ -22263,7 +22307,7 @@ var Version = class {
     this.patch = parts.slice(2).join(".");
   }
 };
-var VERSION = new Version("19.2.2");
+var VERSION = new Version("19.2.3");
 var ModuleWithComponentFactories = class {
   ngModuleFactory;
   componentFactories;
@@ -25419,7 +25463,7 @@ function withDomHydration() {
         return;
       }
       if (inject(IS_HYDRATION_DOM_REUSE_ENABLED)) {
-        verifySsrContentsIntegrity();
+        verifySsrContentsIntegrity(getDocument());
         enableHydrationRuntimeSupport();
       } else if (typeof ngDevMode !== "undefined" && ngDevMode && !isClientRenderModeEnabled()) {
         const console2 = inject(Console);
@@ -25514,19 +25558,6 @@ function logWarningOnStableTimedout(time, console2) {
   const message = `Angular hydration expected the ApplicationRef.isStable() to emit \`true\`, but it didn't happen within ${time}ms. Angular hydration logic depends on the application becoming stable as a signal to complete hydration process.`;
   console2.warn(formatRuntimeError(-506, message));
 }
-function verifySsrContentsIntegrity() {
-  const doc = getDocument();
-  let hydrationMarker;
-  for (const node of doc.body.childNodes) {
-    if (node.nodeType === Node.COMMENT_NODE && node.textContent?.trim() === SSR_CONTENT_INTEGRITY_MARKER) {
-      hydrationMarker = node;
-      break;
-    }
-  }
-  if (!hydrationMarker) {
-    throw new RuntimeError(-507, typeof ngDevMode !== "undefined" && ngDevMode && "Angular hydration logic detected that HTML content of this page was modified after it was produced during server side rendering. Make sure that there are no optimizations that remove comment nodes from HTML enabled on your CDN. Angular hydration relies on HTML produced by the server, including whitespaces and comment nodes.");
-  }
-}
 function booleanAttribute(value) {
   return typeof value === "boolean" ? value : value != null && value !== "false";
 }
@@ -25579,19 +25610,11 @@ function enableProfiling() {
 function disableProfiling() {
   enablePerfLogging = false;
 }
-function untracked(nonReactiveReadsFn) {
-  const prevConsumer = setActiveConsumer(null);
-  try {
-    return nonReactiveReadsFn();
-  } finally {
-    setActiveConsumer(prevConsumer);
-  }
+function untracked2(nonReactiveReadsFn) {
+  return untracked(nonReactiveReadsFn);
 }
 function computed(computation, options) {
-  const getter = createComputed(computation);
-  if (options?.equal) {
-    getter[SIGNAL].equal = options.equal;
-  }
+  const getter = createComputed(computation, options?.equal);
   if (ngDevMode) {
     getter.toString = () => `[Computed: ${getter()}]`;
     getter[SIGNAL].debugName = options?.debugName;
@@ -25876,7 +25899,7 @@ var BaseWritableResource = class {
     this.value.asReadonly = signalAsReadonlyFn;
   }
   update(updateFn) {
-    this.set(updateFn(untracked(this.value)));
+    this.set(updateFn(untracked2(this.value)));
   }
   isLoading = computed(() => this.status() === ResourceStatus.Loading || this.status() === ResourceStatus.Reloading);
   hasValue() {
@@ -25968,8 +25991,8 @@ var ResourceImpl = class extends BaseWritableResource {
     if (this.destroyed) {
       return;
     }
-    const current = untracked(this.value);
-    const state = untracked(this.state);
+    const current = untracked2(this.value);
+    const state = untracked2(this.state);
     if (state.status === ResourceStatus.Local && (this.equal ? this.equal(current, value) : current === value)) {
       return;
     }
@@ -25986,7 +26009,7 @@ var ResourceImpl = class extends BaseWritableResource {
   reload() {
     const {
       status
-    } = untracked(this.state);
+    } = untracked2(this.state);
     if (status === ResourceStatus.Idle || status === ResourceStatus.Loading) {
       return false;
     }
@@ -26019,7 +26042,7 @@ var ResourceImpl = class extends BaseWritableResource {
       const {
         status: currentStatus,
         previousStatus
-      } = untracked(this.state);
+      } = untracked2(this.state);
       if (extRequest.request === void 0) {
         return;
       } else if (currentStatus !== ResourceStatus.Loading) {
@@ -26031,7 +26054,7 @@ var ResourceImpl = class extends BaseWritableResource {
         signal: abortSignal
       } = this.pendingController = new AbortController();
       try {
-        const stream = yield untracked(() => {
+        const stream = yield untracked2(() => {
           return this.loaderFn({
             request: extRequest.request,
             abortSignal,
@@ -26040,7 +26063,7 @@ var ResourceImpl = class extends BaseWritableResource {
             }
           });
         });
-        if (abortSignal.aborted || untracked(this.extRequest) !== extRequest) {
+        if (abortSignal.aborted || untracked2(this.extRequest) !== extRequest) {
           return;
         }
         this.state.set({
@@ -26050,7 +26073,7 @@ var ResourceImpl = class extends BaseWritableResource {
           stream
         });
       } catch (err) {
-        if (abortSignal.aborted || untracked(this.extRequest) !== extRequest) {
+        if (abortSignal.aborted || untracked2(this.extRequest) !== extRequest) {
           return;
         }
         this.state.set({
@@ -26068,7 +26091,7 @@ var ResourceImpl = class extends BaseWritableResource {
     });
   }
   abortInProgressLoad() {
-    untracked(() => this.pendingController?.abort());
+    untracked2(() => this.pendingController?.abort());
     this.pendingController = void 0;
     this.resolvePendingTask?.();
     this.resolvePendingTask = void 0;
@@ -26101,7 +26124,7 @@ function projectStatusOfState(state) {
     case ResourceStatus.Loading:
       return state.extRequest.reload === 0 ? ResourceStatus.Loading : ResourceStatus.Reloading;
     case ResourceStatus.Resolved:
-      return isResolved(untracked(state.stream)) ? ResourceStatus.Resolved : ResourceStatus.Error;
+      return isResolved(untracked2(state.stream)) ? ResourceStatus.Resolved : ResourceStatus.Error;
     default:
       return state.status;
   }
@@ -26875,7 +26898,7 @@ export {
   stopMeasuring,
   enableProfiling,
   disableProfiling,
-  untracked,
+  untracked2 as untracked,
   computed,
   MicrotaskEffectScheduler,
   microtaskEffect,
@@ -26906,35 +26929,35 @@ export {
 
 @angular/core/fesm2022/weak_ref-DrMdAIDh.mjs:
   (**
-   * @license Angular v19.2.2
+   * @license Angular v19.2.3
    * (c) 2010-2025 Google LLC. https://angular.io/
    * License: MIT
    *)
 
 @angular/core/fesm2022/primitives/signals.mjs:
   (**
-   * @license Angular v19.2.2
+   * @license Angular v19.2.3
    * (c) 2010-2025 Google LLC. https://angular.io/
    * License: MIT
    *)
 
 @angular/core/fesm2022/primitives/di.mjs:
   (**
-   * @license Angular v19.2.2
+   * @license Angular v19.2.3
    * (c) 2010-2025 Google LLC. https://angular.io/
    * License: MIT
    *)
 
 @angular/core/fesm2022/primitives/event-dispatch.mjs:
   (**
-   * @license Angular v19.2.2
+   * @license Angular v19.2.3
    * (c) 2010-2025 Google LLC. https://angular.io/
    * License: MIT
    *)
 
 @angular/core/fesm2022/core.mjs:
   (**
-   * @license Angular v19.2.2
+   * @license Angular v19.2.3
    * (c) 2010-2025 Google LLC. https://angular.io/
    * License: MIT
    *)
@@ -26955,4 +26978,4 @@ export {
    * found in the LICENSE file at https://angular.dev/license
    *)
 */
-//# sourceMappingURL=chunk-4OIFDMJR.js.map
+//# sourceMappingURL=chunk-OUAXYCTE.js.map

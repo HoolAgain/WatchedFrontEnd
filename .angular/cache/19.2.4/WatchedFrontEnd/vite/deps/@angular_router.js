@@ -1,7 +1,7 @@
 import {
   Title
-} from "./chunk-RA7S2IEO.js";
-import "./chunk-M7IORJCU.js";
+} from "./chunk-H4BRDEBE.js";
+import "./chunk-4WVEVQKR.js";
 import {
   DOCUMENT,
   HashLocationStrategy,
@@ -10,7 +10,7 @@ import {
   LocationStrategy,
   PathLocationStrategy,
   ViewportScroller
-} from "./chunk-PFNAKHVA.js";
+} from "./chunk-3H66KPUA.js";
 import {
   APP_BOOTSTRAP_LISTENER,
   APP_INITIALIZER,
@@ -76,12 +76,12 @@ import {
   ɵɵloadQuery,
   ɵɵqueryRefresh,
   ɵɵsanitizeUrlOrResourceUrl
-} from "./chunk-4OIFDMJR.js";
-import "./chunk-6Q4RANH6.js";
+} from "./chunk-OUAXYCTE.js";
 import {
   defer,
   isObservable
 } from "./chunk-FFZIAYYX.js";
+import "./chunk-6Q4RANH6.js";
 import {
   BehaviorSubject,
   ConnectableObservable,
@@ -3642,42 +3642,22 @@ var NavigationTransitions = class _NavigationTransitions {
   }
   handleNavigationRequest(request) {
     const id = ++this.navigationId;
-    this.transitions?.next(__spreadProps(__spreadValues(__spreadValues({}, this.transitions.value), request), {
-      id
-    }));
-  }
-  setupNavigations(router, initialUrlTree, initialRouterState) {
-    this.transitions = new BehaviorSubject({
-      id: 0,
-      currentUrlTree: initialUrlTree,
-      currentRawUrl: initialUrlTree,
-      extractedUrl: this.urlHandlingStrategy.extract(initialUrlTree),
-      urlAfterRedirects: this.urlHandlingStrategy.extract(initialUrlTree),
-      rawUrl: initialUrlTree,
-      extras: {},
-      resolve: () => {
-      },
-      reject: () => {
-      },
-      promise: Promise.resolve(true),
-      source: IMPERATIVE_NAVIGATION,
-      restoredState: null,
-      currentSnapshot: initialRouterState.snapshot,
+    this.transitions?.next(__spreadProps(__spreadValues({}, request), {
+      extractedUrl: this.urlHandlingStrategy.extract(request.rawUrl),
       targetSnapshot: null,
-      currentRouterState: initialRouterState,
       targetRouterState: null,
       guards: {
         canActivateChecks: [],
         canDeactivateChecks: []
       },
-      guardsResult: null
-    });
+      guardsResult: null,
+      id
+    }));
+  }
+  setupNavigations(router) {
+    this.transitions = new BehaviorSubject(null);
     return this.transitions.pipe(
-      filter((t) => t.id !== 0),
-      // Extract URL
-      map((t) => __spreadProps(__spreadValues({}, t), {
-        extractedUrl: this.urlHandlingStrategy.extract(t.rawUrl)
-      })),
+      filter((t) => t !== null),
       // Using switchMap so we cancel executing navigations when a new one comes in
       switchMap((overallTransitionState) => {
         let completed = false;
@@ -3713,9 +3693,8 @@ var NavigationTransitions = class _NavigationTransitions {
               return of(t).pipe(
                 // Fire NavigationStart event
                 switchMap((t2) => {
-                  const transition = this.transitions?.getValue();
                   this.events.next(new NavigationStart(t2.id, this.urlSerializer.serialize(t2.extractedUrl), t2.source, t2.restoredState));
-                  if (transition !== this.transitions?.getValue()) {
+                  if (t2.id !== this.navigationId) {
                     return EMPTY;
                   }
                   return Promise.resolve(t2);
@@ -3790,26 +3769,26 @@ var NavigationTransitions = class _NavigationTransitions {
           }),
           // --- RESOLVE ---
           switchTap((t) => {
-            if (t.guards.canActivateChecks.length) {
-              return of(t).pipe(tap((t2) => {
-                const resolveStart = new ResolveStart(t2.id, this.urlSerializer.serialize(t2.extractedUrl), this.urlSerializer.serialize(t2.urlAfterRedirects), t2.targetSnapshot);
-                this.events.next(resolveStart);
-              }), switchMap((t2) => {
-                let dataResolved = false;
-                return of(t2).pipe(resolveData(this.paramsInheritanceStrategy, this.environmentInjector), tap({
-                  next: () => dataResolved = true,
-                  complete: () => {
-                    if (!dataResolved) {
-                      this.cancelNavigationTransition(t2, typeof ngDevMode === "undefined" || ngDevMode ? `At least one route resolver didn't emit any value.` : "", NavigationCancellationCode.NoDataFromResolver);
-                    }
-                  }
-                }));
-              }), tap((t2) => {
-                const resolveEnd = new ResolveEnd(t2.id, this.urlSerializer.serialize(t2.extractedUrl), this.urlSerializer.serialize(t2.urlAfterRedirects), t2.targetSnapshot);
-                this.events.next(resolveEnd);
-              }));
+            if (t.guards.canActivateChecks.length === 0) {
+              return void 0;
             }
-            return void 0;
+            return of(t).pipe(tap((t2) => {
+              const resolveStart = new ResolveStart(t2.id, this.urlSerializer.serialize(t2.extractedUrl), this.urlSerializer.serialize(t2.urlAfterRedirects), t2.targetSnapshot);
+              this.events.next(resolveStart);
+            }), switchMap((t2) => {
+              let dataResolved = false;
+              return of(t2).pipe(resolveData(this.paramsInheritanceStrategy, this.environmentInjector), tap({
+                next: () => dataResolved = true,
+                complete: () => {
+                  if (!dataResolved) {
+                    this.cancelNavigationTransition(t2, typeof ngDevMode === "undefined" || ngDevMode ? `At least one route resolver didn't emit any value.` : "", NavigationCancellationCode.NoDataFromResolver);
+                  }
+                }
+              }));
+            }), tap((t2) => {
+              const resolveEnd = new ResolveEnd(t2.id, this.urlSerializer.serialize(t2.extractedUrl), this.urlSerializer.serialize(t2.urlAfterRedirects), t2.targetSnapshot);
+              this.events.next(resolveEnd);
+            }));
           }),
           // --- LOAD COMPONENTS ---
           switchTap((t) => {
@@ -4316,7 +4295,7 @@ var Router = class _Router {
   });
   constructor() {
     this.resetConfig(this.config);
-    this.navigationTransitions.setupNavigations(this, this.currentUrlTree, this.routerState).subscribe({
+    this.navigationTransitions.setupNavigations(this).subscribe({
       error: (e) => {
         this.console.warn(ngDevMode ? `Unhandled Navigation Error: ${e}` : e);
       }
@@ -5878,7 +5857,7 @@ function mapToCanDeactivate(providers) {
 function mapToResolve(provider) {
   return (...params) => inject(provider).resolve(...params);
 }
-var VERSION = new Version("19.2.2");
+var VERSION = new Version("19.2.3");
 export {
   ActivatedRoute,
   ActivatedRouteSnapshot,
@@ -5963,7 +5942,7 @@ export {
 
 @angular/router/fesm2022/router.mjs:
   (**
-   * @license Angular v19.2.2
+   * @license Angular v19.2.3
    * (c) 2010-2025 Google LLC. https://angular.io/
    * License: MIT
    *)

@@ -56,7 +56,7 @@ import {
   ɵɵinject,
   ɵɵinjectAttribute,
   ɵɵstyleProp
-} from "./chunk-4OIFDMJR.js";
+} from "./chunk-OUAXYCTE.js";
 import {
   Subject,
   __async,
@@ -3684,7 +3684,7 @@ function isPlatformBrowser(platformId) {
 function isPlatformServer(platformId) {
   return platformId === PLATFORM_SERVER_ID;
 }
-var VERSION = new Version("19.2.2");
+var VERSION = new Version("19.2.3");
 var ViewportScroller = class _ViewportScroller {
   // De-sugared tree-shakable injection
   // See #23917
@@ -5122,9 +5122,9 @@ export {
 
 @angular/common/fesm2022/common.mjs:
   (**
-   * @license Angular v19.2.2
+   * @license Angular v19.2.3
    * (c) 2010-2025 Google LLC. https://angular.io/
    * License: MIT
    *)
 */
-//# sourceMappingURL=chunk-PFNAKHVA.js.map
+//# sourceMappingURL=chunk-3H66KPUA.js.map
