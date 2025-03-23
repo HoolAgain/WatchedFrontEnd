@@ -1,0 +1,9 @@
+<div *ngIf="movie" class="movie-details">
+  <img [src]="movie.posterUrl" alt="{{ movie.title }}">
+  <h2>{{ movie.title }} ({{ movie.year }})</h2>
+  <p><strong>Genre:</strong> {{ movie.genre }}</p>
+  <p><strong>Director:</strong> {{ movie.director }}</p>
+  <p><strong>Average Rating:</strong> {{ movie.averageRating}}/10</p>
+
+  <p>Rate Movie, Making this a functional button soon</p>
+</div>

@@ -1,0 +1,28 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+export interface CreatePostRequest {
+    movieId: number;
+    title: string;
+    content: string;
+}
+
+@Injectable({
+    providedIn: 'root'
+})
+export class PostService {
+    private apiUrl = 'http://localhost:5238/api/posts'; // adjust port if needed
+
+    constructor(private http: HttpClient) { }
+
+    // Create a new post
+    createPost(postData: CreatePostRequest): Observable<any> {
+        return this.http.post(`${this.apiUrl}/create`, postData);
+    }
+
+    // Get all posts (you can filter by movie id in the component)
+    getAllPosts(): Observable<any> {
+        return this.http.get(`${this.apiUrl}/all`);
+    }
+}
