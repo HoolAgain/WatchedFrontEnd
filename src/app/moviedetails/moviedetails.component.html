@@ -27,7 +27,7 @@
       <div class="post-header" (click)="togglePost(post)">
         <div class="post-header-info">
           <h4>{{ post.title }}</h4>
-          <p>Posted by: {{ post.user?.username }}</p>
+          <p>Posted by: {{ post.username }}</p>
         </div>
         <div class="post-actions">
           <span class="like-count">{{ post.postLikes?.length || 0 }} Likes</span>
