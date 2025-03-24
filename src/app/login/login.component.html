@@ -22,7 +22,10 @@
     </form>
   
     <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
-  
+
+<button class="guest-btn" (click)="guestLogin()">Continue as Guest</button>
+
+    
     <p class="signup-link">Don't have an account? <a routerLink="/signup">Sign up</a></p>
     <button class="back-btn" (click)="goBack()">Back to Home</button>
   </div>
