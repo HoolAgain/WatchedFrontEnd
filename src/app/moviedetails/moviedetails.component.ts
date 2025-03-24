@@ -16,7 +16,7 @@ export class MoviedetailsComponent implements OnInit {
   newPostContent: string = '';
 
   //constructor
-  constructor(private route: ActivatedRoute, private movieService: MovieService) { }
+  constructor(private route: ActivatedRoute, private movieService: MovieService, private postService: PostService) { }
 
   ngOnInit(): void {
     //get movieId from route
@@ -79,6 +79,24 @@ export class MoviedetailsComponent implements OnInit {
         alert(errorMessage);
       }
     });
+  }
+
+  // Toggle the expanded state of a post for the accordion effect.
+  togglePost(post: any) {
+    post.expanded = !post.expanded;
+  }
+
+  // Stub: Handle like action for a post.
+  likePost(post: any) {
+    // Call your PostService.likePost method (or add similar logic) here.
+    // For now, just log to the console.
+    console.log('Liking post:', post);
+    // You might also update the like count in the UI if successful.
+  }
+
+  // Stub: Show/hide the comment form.
+  showCommentForm(post: any) {
+    post.showCommentForm = !post.showCommentForm;
   }
 
 }

@@ -20,11 +20,37 @@
     <button type="submit">Submit Post</button>
   </form>
 
-  <!-- Display posts for this movie -->
-  <h3>Posts</h3>
-  <div *ngFor="let post of posts" class="post">
-    <h4>{{ post.title }}</h4>
-    <p>{{ post.content }}</p>
-    <small>Posted by: {{ post.user?.username }}</small>
+  <!-- Posts List -->
+  <div class="posts-section">
+    <h3>Posts</h3>
+    <div *ngFor="let post of posts" class="post-card">
+      <div class="post-header" (click)="togglePost(post)">
+        <div class="post-header-info">
+          <h4>{{ post.title }}</h4>
+          <p>Posted by: {{ post.user?.username }}</p>
+        </div>
+        <div class="post-actions">
+          <span class="like-count">{{ post.postLikes?.length || 0 }} Likes</span>
+          <button (click)="likePost(post); $event.stopPropagation()">Like</button>
+          <button (click)="showCommentForm(post); $event.stopPropagation()">Comment</button>
+        </div>
+      </div>
+      <div class="post-body" [hidden]="!post.expanded">
+        <p>{{ post.content }}</p>
+        <!-- Placeholder for comments and comment form -->
+        <div class="comments-section">
+          <h5>Comments</h5>
+          <div *ngFor="let comment of post.comments" class="comment">
+            <p>{{ comment.content }}</p>
+            <small>Posted by: {{ comment.user?.username }}</small>
+          </div>
+        </div>
+        <div class="comment-form" *ngIf="post.showCommentForm">
+          <!-- Just a placeholder, not wired up yet -->
+          <input type="text" placeholder="Add a comment...">
+          <button>Add Comment</button>
+        </div>
+      </div>
+    </div>
   </div>
 </div>

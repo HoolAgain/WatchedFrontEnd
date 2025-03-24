@@ -10,6 +10,8 @@ import { LoginComponent } from './login/login.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MoviedetailsComponent } from './moviedetails/moviedetails.component';
 import { RatemovieComponent } from './ratemovie/ratemovie.component';
+import { HTTP_INTERCEPTORS } from '@angular/common/http';
+import { AuthInterceptor } from './services/auth.interceptor';
 
 
 @NgModule({
@@ -28,7 +30,7 @@ import { RatemovieComponent } from './ratemovie/ratemovie.component';
     ReactiveFormsModule,
     FormsModule
   ],
-  providers: [/*{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }*/],
+  providers: [{ provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true }],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
