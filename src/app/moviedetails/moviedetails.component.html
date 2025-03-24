@@ -37,18 +37,19 @@
       </div>
       <div class="post-body" [hidden]="!post.expanded">
         <p>{{ post.content }}</p>
-        <!-- Placeholder for comments and comment form -->
+        <!-- Comments Section -->
         <div class="comments-section">
           <h5>Comments</h5>
-          <div *ngFor="let comment of post.comments" class="comment">
+          <div *ngFor="let comment of (post.comments?.$values || post.comments)">
             <p>{{ comment.content }}</p>
-            <small>Posted by: {{ comment.user?.username }}</small>
+            <small>Posted by: {{ comment.username }}</small>
           </div>
         </div>
+        <!-- Comment Form -->
         <div class="comment-form" *ngIf="post.showCommentForm">
-          <!-- Just a placeholder, not wired up yet -->
-          <input type="text" placeholder="Add a comment...">
-          <button>Add Comment</button>
+          <input type="text" id="comment-input-{{ post.postId }}" placeholder="Add a comment..."
+            [(ngModel)]="post.newCommentContent">
+          <button (click)="addComment(post)">Add Comment</button>
         </div>
       </div>
     </div>

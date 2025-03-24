@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { MovieService } from '../services/movies.service';
 import { PostService, CreatePostRequest } from '../services/post.service';
+import { CommentService, CreateCommentRequest } from '../services/comment.service';
 
 @Component({
   selector: 'app-moviedetails',
@@ -15,38 +16,32 @@ export class MoviedetailsComponent implements OnInit {
   newPostTitle: string = '';
   newPostContent: string = '';
 
-  //constructor
-  constructor(private route: ActivatedRoute, private movieService: MovieService, private postService: PostService) { }
+  // Inject CommentService along with others.
+  constructor(
+    private route: ActivatedRoute,
+    private movieService: MovieService,
+    private postService: PostService,
+    private commentService: CommentService
+  ) { }
 
   ngOnInit(): void {
-    // Get movieId from route as a string
     const movieIdStr = this.route.snapshot.paramMap.get('id');
     if (movieIdStr) {
-      // Convert the movieId to a number
       const movieId = +movieIdStr;
-      // Get movie details
       this.movieService.getMovieById(movieId).subscribe((movie) => {
         this.movie = movie;
-        // Now pass the number to getPosts
         this.getPosts(movieId);
       });
     }
   }
 
-
-  getMovie(id: number) {
-    //call api
-    this.movieService.getMovieById(id).subscribe(data => {
-      this.movie = data;
-    });
-  }
-
   getPosts(movieId: number) {
     this.postService.getAllPosts().subscribe({
       next: (data) => {
-        // If data is wrapped (e.g. { $id: "1", $values: [...] }), extract the array.
+        // With Newtonsoft and our DTO projection, data is wrapped?
+        // If still wrapped:
         const postsArray = data && data.$values ? data.$values : data;
-        // Now filter posts for the given movieId.
+        // Filter posts by movieId (adjust property name if needed)
         this.posts = postsArray.filter((post: any) => post.movieId === movieId);
         console.log('Filtered posts for movieId', movieId, ':', this.posts);
       },
@@ -55,7 +50,6 @@ export class MoviedetailsComponent implements OnInit {
       }
     });
   }
-
 
   createPost() {
     const postData: CreatePostRequest = {
@@ -67,13 +61,10 @@ export class MoviedetailsComponent implements OnInit {
     this.postService.createPost(postData).subscribe({
       next: (response) => {
         console.log('Post created successfully:', response);
-        // Immediately update the posts list:
-        this.posts.push(response);
-        // Provide feedback to the user
         alert('Your post has been successfully added!');
-        // Clear the form fields.
         this.newPostTitle = '';
         this.newPostContent = '';
+        this.getPosts(this.movie.movieId);
       },
       error: (error) => {
         console.error('Error creating post:', error);
@@ -86,22 +77,74 @@ export class MoviedetailsComponent implements OnInit {
     });
   }
 
-  // Toggle the expanded state of a post for the accordion effect.
+  // Toggle accordion expansion and load comments if not already loaded.
   togglePost(post: any) {
     post.expanded = !post.expanded;
+    if (post.expanded && !post.comments) {
+      this.loadComments(post);
+    }
   }
 
-  // Stub: Handle like action for a post.
-  likePost(post: any) {
-    // Call your PostService.likePost method (or add similar logic) here.
-    // For now, just log to the console.
+  loadComments(post: any): void {
+    this.commentService.getCommentsForPost(post.postId).subscribe({
+      next: (data) => {
+        // If data is wrapped (e.g. { $id: "...", $values: [...] }), use $values; otherwise, use data.
+        const commentsArray = data && data.$values ? data.$values : data;
+        post.comments = commentsArray;
+      },
+      error: (error) => {
+        console.error('Error loading comments:', error);
+      }
+    });
+  }
+
+
+  addComment(post: any): void {
+    const commentText = post.newCommentContent;
+    if (!commentText) {
+      alert('Please enter a comment.');
+      return;
+    }
+    const request = { postId: post.postId, content: commentText } as CreateCommentRequest;
+    this.commentService.createComment(request).subscribe({
+      next: (newComment) => {
+        alert('Comment added successfully!');
+        // Ensure post.comments is an array:
+        if (!post.comments) {
+          post.comments = [];
+        } else if (!Array.isArray(post.comments)) {
+          post.comments = post.comments.$values || [];
+        }
+        post.comments.push(newComment);
+        // Clear the temporary input.
+        post.newCommentContent = '';
+      },
+      error: (error) => {
+        console.error('Error adding comment:', error);
+        alert('Failed to add comment.');
+      }
+    });
+  }
+
+
+
+  //Not implemented
+  likePost(post: any): void {
+    // TODO: Implement liking functionality
     console.log('Liking post:', post);
-    // You might also update the like count in the UI if successful.
   }
 
-  // Stub: Show/hide the comment form.
-  showCommentForm(post: any) {
-    post.showCommentForm = !post.showCommentForm;
+  showCommentForm(post: any): void {
+    // Open the comment form (ensure it is visible)
+    post.showCommentForm = true;
+    // Optionally also expand the post details if needed:
+    post.expanded = true;
+    // Wait a tick for Angular to update the view, then focus the input.
+    setTimeout(() => {
+      const input = document.getElementById(`comment-input-${post.postId}`) as HTMLInputElement;
+      if (input) {
+        input.focus();
+      }
+    }, 0);
   }
-
 }
