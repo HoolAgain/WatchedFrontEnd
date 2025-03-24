@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MovieService } from '../services/movies.service';
+import { AuthService } from '../services/auth.service'; 
 
 @Component({
   selector: 'app-homepage',
@@ -10,12 +11,21 @@ import { MovieService } from '../services/movies.service';
 export class HomepageComponent implements OnInit{
   //on initialize create movies array
   movies: any[] = [];
+  //create a bool
+  isLoggedIn = false; 
 
-  //get movie service
-  constructor(private movieService: MovieService) {}
+  //get services
+  constructor(private movieService: MovieService,  private authService: AuthService) {}
 
-  //on init get the movies
+  //on init get the movies, and 
   ngOnInit(): void {
+    const token = this.authService.getToken();
+    //check if theres a token
+    if (token) {
+      this.isLoggedIn = true;
+    } else {
+      this.isLoggedIn = false;
+    }    
     this.checkMovies();
   }
 
@@ -54,5 +64,8 @@ export class HomepageComponent implements OnInit{
     );
   }
 
- 
+  //logout function from auth service
+  logout(): void {
+    this.authService.logout();
+  }
 }

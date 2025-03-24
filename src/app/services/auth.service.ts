@@ -36,6 +36,20 @@ export class AuthService {
     );
   }
 
+  //guest login api
+  guestLogin(): Observable<any> {
+    //url to backend
+    return this.http.post(`${this.apiUrl}/guest`, {}).pipe(
+      //tap to get all those tokens and ids
+      tap((response: any) => {
+        this.storeTokens({ token: response.token, refreshToken: response.refreshToken, userId: response.userId, userClass: 'guest'});
+        //start token refresh
+        this.startTokenRefresh();
+      })
+    );
+  }
+  
+
   startTokenRefresh() {
     //if refresh token exists, unsubscribe to restart this proccess
     if (this.refreshSubscription) {
@@ -82,6 +96,7 @@ export class AuthService {
     );
   }
 
+
   //set items
   storeTokens(tokens: any): void {
     console.log(Object.keys(tokens));
@@ -113,7 +128,6 @@ export class AuthService {
     localStorage.removeItem('userClass');
     
     console.log("Logged out successfully.");
-    this.router.navigate(['/login']); 
   }
   
 }
