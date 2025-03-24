@@ -19,13 +19,16 @@ export class MoviedetailsComponent implements OnInit {
   constructor(private route: ActivatedRoute, private movieService: MovieService, private postService: PostService) { }
 
   ngOnInit(): void {
-    //get movieId from route
-    const movieId = this.route.snapshot.paramMap.get('id');
-
-    if (movieId) {
-      //get movie id
-      this.movieService.getMovieById(+movieId).subscribe((movie) => {
+    // Get movieId from route as a string
+    const movieIdStr = this.route.snapshot.paramMap.get('id');
+    if (movieIdStr) {
+      // Convert the movieId to a number
+      const movieId = +movieIdStr;
+      // Get movie details
+      this.movieService.getMovieById(movieId).subscribe((movie) => {
         this.movie = movie;
+        // Now pass the number to getPosts
+        this.getPosts(movieId);
       });
     }
   }
@@ -43,7 +46,9 @@ export class MoviedetailsComponent implements OnInit {
       next: (data) => {
         // If data is wrapped (e.g. { $id: "1", $values: [...] }), extract the array.
         const postsArray = data && data.$values ? data.$values : data;
+        // Now filter posts for the given movieId.
         this.posts = postsArray.filter((post: any) => post.movieId === movieId);
+        console.log('Filtered posts for movieId', movieId, ':', this.posts);
       },
       error: (error) => {
         console.error('Error retrieving posts:', error);
