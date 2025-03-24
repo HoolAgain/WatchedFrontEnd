@@ -88,3 +88,31 @@
 .comment-form {
     margin-top: 10px;
 }
+
+/* Container for all comments within a post */
+.comments-section {
+    margin-top: 15px;
+}
+
+/* Each comment card */
+.comment-card {
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #f9f9f9;
+    margin-bottom: 10px;
+}
+
+/* Style for the comment content */
+.comment-content {
+    font-size: 1.1em;
+    margin-bottom: 5px;
+    font-weight: 500;
+}
+
+/* Style for the comment metadata (username, date, etc.) */
+.comment-meta {
+    font-size: 0.9em;
+    color: #555;
+    text-align: right;
+}

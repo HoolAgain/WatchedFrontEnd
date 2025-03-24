@@ -1,12 +1,21 @@
-<div *ngIf="movie" class="movie-details">
-  <img [src]="movie.posterUrl" alt="{{ movie.title }}">
-  <h2>{{ movie.title }} ({{ movie.year }})</h2>
-  <p><strong>Genre:</strong> {{ movie.genre }}</p>
-  <p><strong>Director:</strong> {{ movie.director }}</p>
-  <p><strong>Average Rating:</strong> {{ movie.averageRating }}/10</p>
-  <a [routerLink]="['/addrating', movie.movieId]">Rate Movie!</a>
+<div class="header">
+  <button (click)="goHome()">Return Home</button>
+</div>
 
-  <!-- Post creation form -->
+<div *ngIf="movie" class="movie-details-container">
+  <!-- Movie Info Section -->
+  <div class="movie-info">
+    <img class="movie-poster" [src]="movie.posterUrl" alt="{{ movie.title }}">
+    <div class="movie-card">
+      <h2>{{ movie.title }} ({{ movie.year }})</h2>
+      <p><strong>Genre:</strong> {{ movie.genre }}</p>
+      <p><strong>Director:</strong> {{ movie.director }}</p>
+      <p><strong>Average Rating:</strong> {{ movie.averageRating }}/10</p>
+      <a [routerLink]="['/addrating', movie.movieId]">Rate Movie!</a>
+    </div>
+  </div>
+
+  <!-- Post Creation Form -->
   <h3>Leave a Post</h3>
   <form (ngSubmit)="createPost()">
     <div>
@@ -42,9 +51,13 @@
         <!-- Comments Section -->
         <div class="comments-section">
           <h5>Comments</h5>
-          <div *ngFor="let comment of (post.comments?.$values || post.comments)">
-            <p>{{ comment.content }}</p>
-            <small>Posted by: {{ comment.username }}</small>
+          <div *ngFor="let comment of (post.comments?.$values || post.comments)" class="comment-card">
+            <div class="comment-content">
+              {{ comment.content }}
+            </div>
+            <div class="comment-meta">
+              Posted by: {{ comment.username }}
+            </div>
           </div>
         </div>
         <!-- Comment Form -->

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MovieService } from '../services/movies.service';
 import { PostService, CreatePostRequest } from '../services/post.service';
 import { CommentService, CreateCommentRequest } from '../services/comment.service';
@@ -18,6 +18,7 @@ export class MoviedetailsComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private movieService: MovieService,
     private postService: PostService,
     private commentService: CommentService
@@ -32,6 +33,10 @@ export class MoviedetailsComponent implements OnInit {
         this.getPosts(movieId);
       });
     }
+  }
+
+  goHome(): void {
+    this.router.navigate(['/']);
   }
 
   getPosts(movieId: number) {
