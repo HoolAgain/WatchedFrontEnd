@@ -127,66 +127,43 @@ export class MoviedetailsComponent implements OnInit {
     });
   }
 
-
-  // Helper to check if current user liked this post.
-  hasLiked(post: any): boolean {
-    const currentUserId = +localStorage.getItem('userId')!;
-    if (!post.postLikes || !Array.isArray(post.postLikes)) {
-      return false;
-    }
-    return post.postLikes.some((like: any) => like.userId === currentUserId);
-  }
-
   toggleLike(post: any): void {
-    if (this.hasLiked(post)) {
-      // If already liked, unlike the post.
-      this.unlikePost(post);
+    if (post.hasLiked) {
+      // Unlike the post.
+      this.postService.unlikePost(post.postId).subscribe({
+        next: (response) => {
+          // Update the local post object.
+          post.hasLiked = false;
+          post.likeCount = Math.max((post.likeCount || 1) - 1, 0);
+          alert("Like removed!");
+        },
+        error: (error) => {
+          console.error('Error unliking post:', error);
+          alert(error.error?.message || "Error unliking post.");
+        }
+      });
     } else {
-      // Otherwise, like the post.
-      this.likePost(post);
+      // Like the post.
+      const currentUserId = +localStorage.getItem('userId')!;
+      // Prevent liking your own post.
+      if (post.userId === currentUserId) {
+        alert("You cannot like your own post.");
+        return;
+      }
+      this.postService.likePost(post.postId).subscribe({
+        next: (likeResponse) => {
+          // Update the local post object.
+          post.hasLiked = true;
+          post.likeCount = (post.likeCount || 0) + 1;
+          alert("Post liked!");
+        },
+        error: (error) => {
+          console.error('Error liking post:', error);
+          alert(error.error?.message || "Error liking post.");
+        }
+      });
     }
   }
-
-  likePost(post: any): void {
-    const currentUserId = +localStorage.getItem('userId')!;
-    if (post.userId === currentUserId) {
-      alert("You cannot like your own post.");
-      return;
-    }
-    this.postService.likePost(post.postId).subscribe({
-      next: (likeResponse) => {
-        if (!post.postLikes || !Array.isArray(post.postLikes)) {
-          post.postLikes = [];
-        }
-        post.postLikes.push(likeResponse);
-        post.likeCount = (post.likeCount || 0) + 1;
-        alert("Post liked!");
-      },
-      error: (error) => {
-        console.error('Error liking post:', error);
-        alert(error.error?.message || "Error liking post.");
-      }
-    });
-  }
-
-  unlikePost(post: any): void {
-    this.postService.unlikePost(post.postId).subscribe({
-      next: (response) => {
-        const currentUserId = +localStorage.getItem('userId')!;
-        if (post.postLikes && Array.isArray(post.postLikes)) {
-          post.postLikes = post.postLikes.filter((like: any) => like.userId !== currentUserId);
-        }
-        // Decrement likeCount if available.
-        post.likeCount = Math.max((post.likeCount || 1) - 1, 0);
-        alert("Like removed!");
-      },
-      error: (error) => {
-        console.error('Error unliking post:', error);
-        alert(error.error?.message || "Error unliking post.");
-      }
-    });
-  }
-
 
 
   showCommentForm(post: any): void {

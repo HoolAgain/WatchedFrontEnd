@@ -32,11 +32,10 @@
         <div class="post-actions">
           <span class="like-count">{{ post.likeCount || 0 }} Likes</span>
           <button (click)="toggleLike(post); $event.stopPropagation()">
-            {{ hasLiked(post) ? 'Unlike' : 'Like' }}
+            {{ post.hasLiked ? 'Unlike' : 'Like' }}
           </button>
           <button (click)="showCommentForm(post); $event.stopPropagation()">Comment</button>
         </div>
-
       </div>
       <div class="post-body" [hidden]="!post.expanded">
         <p>{{ post.content }}</p>
