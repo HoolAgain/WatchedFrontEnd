@@ -3,7 +3,27 @@
   <h2>{{ movie.title }} ({{ movie.year }})</h2>
   <p><strong>Genre:</strong> {{ movie.genre }}</p>
   <p><strong>Director:</strong> {{ movie.director }}</p>
-  <p><strong>Average Rating:</strong> {{ movie.averageRating}}/10</p>
+  <p><strong>Average Rating:</strong> {{ movie.averageRating }}/10</p>
 
-  <p>Rate Movie, Making this a functional button soon</p>
+  <!-- Post creation form -->
+  <h3>Leave a Post</h3>
+  <form (ngSubmit)="createPost()">
+    <div>
+      <label for="postTitle">Title</label>
+      <input type="text" id="postTitle" [(ngModel)]="newPostTitle" name="postTitle" required>
+    </div>
+    <div>
+      <label for="postContent">Content</label>
+      <textarea id="postContent" [(ngModel)]="newPostContent" name="postContent" required></textarea>
+    </div>
+    <button type="submit">Submit Post</button>
+  </form>
+
+  <!-- Display posts for this movie -->
+  <h3>Posts</h3>
+  <div *ngFor="let post of posts" class="post">
+    <h4>{{ post.title }}</h4>
+    <p>{{ post.content }}</p>
+    <small>Posted by: {{ post.user?.username }}</small>
+  </div>
 </div>
