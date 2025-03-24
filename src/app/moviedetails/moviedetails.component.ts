@@ -39,6 +39,11 @@ export class MoviedetailsComponent implements OnInit {
       next: (data) => {
         const postsArray = data && data.$values ? data.$values : data;
         this.posts = postsArray.filter((post: any) => post.movieId === movieId);
+        this.posts.forEach((post: any) => {
+          if (post.liked === undefined) {
+            post.liked = false;
+          }
+        });
         console.log('Filtered posts for movieId', movieId, ':', this.posts);
       },
       error: (error) => {
@@ -46,6 +51,7 @@ export class MoviedetailsComponent implements OnInit {
       }
     });
   }
+
 
   createPost() {
     const postData: CreatePostRequest = {
@@ -122,15 +128,56 @@ export class MoviedetailsComponent implements OnInit {
   }
 
 
-
-  //Not implemented
-  likePost(post: any): void {
-    // TODO: Implement liking functionality
-    console.log('Liking post:', post);
+  hasLiked(post: any): boolean {
+    const currentUserId = +localStorage.getItem('userId')!;
+    if (!post.postLikes || !Array.isArray(post.postLikes)) {
+      return false;
+    }
+    return post.postLikes.some((like: any) => like.userId === currentUserId);
   }
 
+
+  likePost(post: any): void {
+    const currentUserId = +localStorage.getItem('userId')!;
+    // Prevent liking your own post.
+    if (post.userId === currentUserId) {
+      alert("You cannot like your own post.");
+      return;
+    }
+    this.postService.likePost(post.postId).subscribe({
+      next: (likeResponse) => {
+        if (!post.postLikes || !Array.isArray(post.postLikes)) {
+          post.postLikes = [];
+        }
+        post.postLikes.push(likeResponse);
+        alert("Post liked!");
+      },
+      error: (error) => {
+        console.error('Error liking post:', error);
+        alert(error.error?.message || "Error liking post.");
+      }
+    });
+  }
+
+
+  unlikePost(post: any): void {
+    this.postService.unlikePost(post.postId).subscribe({
+      next: (response) => {
+        const currentUserId = +localStorage.getItem('userId')!;
+        if (post.postLikes && Array.isArray(post.postLikes)) {
+          post.postLikes = post.postLikes.filter((like: any) => like.userId !== currentUserId);
+        }
+        alert("Like removed!");
+      },
+      error: (error) => {
+        console.error('Error unliking post:', error);
+        alert(error.error?.message || "Error unliking post.");
+      }
+    });
+  }
+
+
   showCommentForm(post: any): void {
-    // Open the comment form
     post.showCommentForm = true;
     post.expanded = true;
     // Needs to wait a tick for Angular to update the view

@@ -23,4 +23,12 @@ export class PostService {
     getAllPosts(): Observable<any> {
         return this.http.get(`${this.apiUrl}/all`);
     }
+
+    likePost(postId: number): Observable<any> {
+        return this.http.post(`${this.apiUrl}/${postId}/like`, {});
+    }
+
+    unlikePost(postId: number): Observable<any> {
+        return this.http.delete(`${this.apiUrl}/${postId}/like`);
+    }
 }

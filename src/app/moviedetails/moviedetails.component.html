@@ -30,8 +30,9 @@
           <p>Posted by: {{ post.username }}</p>
         </div>
         <div class="post-actions">
-          <span class="like-count">{{ post.postLikes?.length || 0 }} Likes</span>
-          <button (click)="likePost(post); $event.stopPropagation()">Like</button>
+          <span class="like-count">{{ post.likeCount || 0 }} Likes</span>
+          <button *ngIf="!hasLiked(post)" (click)="likePost(post); $event.stopPropagation()">Like</button>
+          <button *ngIf="hasLiked(post)" (click)="unlikePost(post); $event.stopPropagation()">Unlike</button>
           <button (click)="showCommentForm(post); $event.stopPropagation()">Comment</button>
         </div>
       </div>
