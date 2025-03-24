@@ -128,6 +128,7 @@ export class MoviedetailsComponent implements OnInit {
   }
 
 
+  // Helper to check if current user liked this post.
   hasLiked(post: any): boolean {
     const currentUserId = +localStorage.getItem('userId')!;
     if (!post.postLikes || !Array.isArray(post.postLikes)) {
@@ -136,10 +137,18 @@ export class MoviedetailsComponent implements OnInit {
     return post.postLikes.some((like: any) => like.userId === currentUserId);
   }
 
+  toggleLike(post: any): void {
+    if (this.hasLiked(post)) {
+      // If already liked, unlike the post.
+      this.unlikePost(post);
+    } else {
+      // Otherwise, like the post.
+      this.likePost(post);
+    }
+  }
 
   likePost(post: any): void {
     const currentUserId = +localStorage.getItem('userId')!;
-    // Prevent liking your own post.
     if (post.userId === currentUserId) {
       alert("You cannot like your own post.");
       return;
@@ -150,6 +159,7 @@ export class MoviedetailsComponent implements OnInit {
           post.postLikes = [];
         }
         post.postLikes.push(likeResponse);
+        post.likeCount = (post.likeCount || 0) + 1;
         alert("Post liked!");
       },
       error: (error) => {
@@ -159,7 +169,6 @@ export class MoviedetailsComponent implements OnInit {
     });
   }
 
-
   unlikePost(post: any): void {
     this.postService.unlikePost(post.postId).subscribe({
       next: (response) => {
@@ -167,6 +176,8 @@ export class MoviedetailsComponent implements OnInit {
         if (post.postLikes && Array.isArray(post.postLikes)) {
           post.postLikes = post.postLikes.filter((like: any) => like.userId !== currentUserId);
         }
+        // Decrement likeCount if available.
+        post.likeCount = Math.max((post.likeCount || 1) - 1, 0);
         alert("Like removed!");
       },
       error: (error) => {
@@ -175,6 +186,7 @@ export class MoviedetailsComponent implements OnInit {
       }
     });
   }
+
 
 
   showCommentForm(post: any): void {

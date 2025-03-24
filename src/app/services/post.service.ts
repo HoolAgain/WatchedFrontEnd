@@ -31,4 +31,5 @@ export class PostService {
     unlikePost(postId: number): Observable<any> {
         return this.http.delete(`${this.apiUrl}/${postId}/like`);
     }
+
 }
