@@ -7,8 +7,9 @@ import { HomepageComponent } from './homepage/homepage.component';
 import { HttpClientModule } from '@angular/common/http';
 import { SignupComponent } from './signup/signup.component';
 import { LoginComponent } from './login/login.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MoviedetailsComponent } from './moviedetails/moviedetails.component';
+import { RatemovieComponent } from './ratemovie/ratemovie.component';
 
 @NgModule({
   declarations: [
@@ -16,13 +17,15 @@ import { MoviedetailsComponent } from './moviedetails/moviedetails.component';
     HomepageComponent,
     SignupComponent,
     LoginComponent,
-    MoviedetailsComponent
+    MoviedetailsComponent,
+    RatemovieComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    ReactiveFormsModule 
+    ReactiveFormsModule,
+    FormsModule 
   ],
   providers: [],
   bootstrap: [AppComponent]

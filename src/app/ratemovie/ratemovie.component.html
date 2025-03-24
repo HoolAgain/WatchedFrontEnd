@@ -1,0 +1,14 @@
+<div class="add-rating">
+  <h2>Rate the Movie</h2>
+  <label for="rating">Rate this movie:</label>
+  <input
+    type="number"
+    id="rating"
+    [(ngModel)]="rating"
+    min="1"
+    max="10"
+    placeholder="Enter a rating (1-10)"
+  />
+  <button (click)="submitRating()">Submit Rating</button>
+  <p>{{ message }}</p>
+</div>

@@ -1,8 +1,13 @@
 <nav class="navbar">
   <h1>Watched Movies</h1>
   <div class="nav-buttons">
-    <a href="/signup">Sign Up</a>
-    <a href="/login">Login</a>
+    <ng-container *ngIf="!isLoggedIn; else loggedInTemplate">
+      <a routerLink="/signup">Sign Up</a>
+      <a routerLink="/login">Login</a>
+    </ng-container>
+    <ng-template #loggedInTemplate>
+      <button (click)="logout()">Logout</button>
+    </ng-template>
   </div>
 </nav>
 

@@ -11,22 +11,26 @@ import { MovieService } from '../services/movies.service';
 export class MoviedetailsComponent {
   movie: any;
 
-  constructor(
-    private route: ActivatedRoute,
-    private movieService: MovieService
-  ) {}
+  //constructor
+  constructor(private route: ActivatedRoute,private movieService: MovieService) {}
 
   ngOnInit(): void {
-    //get the movie id for the clicked one
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.getMovie(id);
+    //get movieId from route
+    const movieId = this.route.snapshot.paramMap.get('id');
+
+    if (movieId) {
+      //get movie id
+      this.movieService.getMovieById(+movieId).subscribe((movie) => {
+        this.movie = movie;
+      });
+    }
   }
 
+
   getMovie(id: number) {
-    //call the api
+    //call api
     this.movieService.getMovieById(id).subscribe(data => {
       this.movie = data;
     });
   }
 }
-
