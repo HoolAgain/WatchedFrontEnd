@@ -4,6 +4,7 @@
   <p><strong>Genre:</strong> {{ movie.genre }}</p>
   <p><strong>Director:</strong> {{ movie.director }}</p>
   <p><strong>Average Rating:</strong> {{ movie.averageRating }}/10</p>
+  <a [routerLink]="['/addrating', movie.movieId]">Rate Movie!</a>
 
   <!-- Post creation form -->
   <h3>Leave a Post</h3>

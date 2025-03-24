@@ -398,3 +398,6 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+
+.angular/cache/
+.angular/cache/19.2.4/WatchedFrontEnd/.tsbuildinfo

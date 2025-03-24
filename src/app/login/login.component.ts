@@ -45,10 +45,26 @@ export class LoginComponent {
       error: (error) => {
         //errors for handling
         console.error('Login failed', error);
-        this.errorMessage = error.error?.message || "Invalid username or password!";
+        this.errorMessage = error.error?.message || "Invalid username or password";
       }
     });
   }
+
+  guestLogin() {
+    //call api
+    this.authService.guestLogin().subscribe({
+      next: (response) => {
+        console.log('Guest login successful', response);
+        //redirect home
+        this.router.navigate(['/']);
+      },
+      error: (error) => {
+        console.error('Guest login failed', error);
+        this.errorMessage = "Unable to login as guest.";
+      }
+    });
+  }
+  
   
   goBack() {
     this.router.navigate(['/']); 

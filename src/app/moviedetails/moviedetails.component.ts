@@ -15,20 +15,24 @@ export class MoviedetailsComponent implements OnInit {
   newPostTitle: string = '';
   newPostContent: string = '';
 
-  constructor(
-    private route: ActivatedRoute,
-    private movieService: MovieService,
-    private postService: PostService
-  ) { }
+  //constructor
+  constructor(private route: ActivatedRoute, private movieService: MovieService) { }
 
   ngOnInit(): void {
-    // Get the movie id from the route parameters.
-    const id = Number(this.route.snapshot.paramMap.get('id'));
-    this.getMovie(id);
-    this.getPosts(id);
+    //get movieId from route
+    const movieId = this.route.snapshot.paramMap.get('id');
+
+    if (movieId) {
+      //get movie id
+      this.movieService.getMovieById(+movieId).subscribe((movie) => {
+        this.movie = movie;
+      });
+    }
   }
 
+
   getMovie(id: number) {
+    //call api
     this.movieService.getMovieById(id).subscribe(data => {
       this.movie = data;
     });

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -22,4 +22,10 @@ export class MovieService {
     return this.http.get<any>(`${this.apiUrl}/${id}`); 
   }
   
+  rateMovie(movieId: number, rating: number): Observable<any> {
+    //get the token and set it in the headers of the bearer token for validation
+    const token = localStorage.getItem('token'); 
+    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+    return this.http.post(`${this.apiUrl}/${movieId}/ratemovie`, { Rating: rating }, { headers });
+  }
 }
