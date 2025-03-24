@@ -15,12 +15,10 @@ export class CommentService {
 
     constructor(private http: HttpClient) { }
 
-    // Create a new comment
     createComment(request: CreateCommentRequest): Observable<any> {
         return this.http.post(`${this.apiUrl}/create`, request);
     }
 
-    // Get all comments for a given post
     getCommentsForPost(postId: number): Observable<any> {
         return this.http.get(`${this.apiUrl}/post/${postId}`);
     }

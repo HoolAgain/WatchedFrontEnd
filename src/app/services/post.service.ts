@@ -16,12 +16,10 @@ export class PostService {
 
     constructor(private http: HttpClient) { }
 
-    // Create a new post
     createPost(postData: CreatePostRequest): Observable<any> {
         return this.http.post(`${this.apiUrl}/create`, postData);
     }
 
-    // Get all posts (you can filter by movie id in the component)
     getAllPosts(): Observable<any> {
         return this.http.get(`${this.apiUrl}/all`);
     }

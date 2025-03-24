@@ -16,7 +16,6 @@ export class MoviedetailsComponent implements OnInit {
   newPostTitle: string = '';
   newPostContent: string = '';
 
-  // Inject CommentService along with others.
   constructor(
     private route: ActivatedRoute,
     private movieService: MovieService,
@@ -38,10 +37,7 @@ export class MoviedetailsComponent implements OnInit {
   getPosts(movieId: number) {
     this.postService.getAllPosts().subscribe({
       next: (data) => {
-        // With Newtonsoft and our DTO projection, data is wrapped?
-        // If still wrapped:
         const postsArray = data && data.$values ? data.$values : data;
-        // Filter posts by movieId (adjust property name if needed)
         this.posts = postsArray.filter((post: any) => post.movieId === movieId);
         console.log('Filtered posts for movieId', movieId, ':', this.posts);
       },
@@ -77,7 +73,7 @@ export class MoviedetailsComponent implements OnInit {
     });
   }
 
-  // Toggle accordion expansion and load comments if not already loaded.
+  // Toggle accordion expansion and load comments
   togglePost(post: any) {
     post.expanded = !post.expanded;
     if (post.expanded && !post.comments) {
@@ -88,7 +84,7 @@ export class MoviedetailsComponent implements OnInit {
   loadComments(post: any): void {
     this.commentService.getCommentsForPost(post.postId).subscribe({
       next: (data) => {
-        // If data is wrapped (e.g. { $id: "...", $values: [...] }), use $values; otherwise, use data.
+        // DATA IS WRAPPED { $id: "...", $values: [...] }, use $values; otherwise, use data.
         const commentsArray = data && data.$values ? data.$values : data;
         post.comments = commentsArray;
       },
@@ -109,7 +105,6 @@ export class MoviedetailsComponent implements OnInit {
     this.commentService.createComment(request).subscribe({
       next: (newComment) => {
         alert('Comment added successfully!');
-        // Ensure post.comments is an array:
         if (!post.comments) {
           post.comments = [];
         } else if (!Array.isArray(post.comments)) {
@@ -135,11 +130,10 @@ export class MoviedetailsComponent implements OnInit {
   }
 
   showCommentForm(post: any): void {
-    // Open the comment form (ensure it is visible)
+    // Open the comment form
     post.showCommentForm = true;
-    // Optionally also expand the post details if needed:
     post.expanded = true;
-    // Wait a tick for Angular to update the view, then focus the input.
+    // Needs to wait a tick for Angular to update the view
     setTimeout(() => {
       const input = document.getElementById(`comment-input-${post.postId}`) as HTMLInputElement;
       if (input) {
