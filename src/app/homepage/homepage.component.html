@@ -2,10 +2,12 @@
   <h1>Watched Movies</h1>
   <div class="nav-buttons">
     <ng-container *ngIf="!isLoggedIn; else loggedInTemplate">
+      <a routerLink="/chatbot">Chatbot Support</a>
       <a routerLink="/signup">Sign Up</a>
       <a routerLink="/login">Login</a>
     </ng-container>
     <ng-template #loggedInTemplate>
+      <a routerLink="/chatbot">Chatbot Support</a>
       <button (click)="logout()">Logout</button>
     </ng-template>
   </div>

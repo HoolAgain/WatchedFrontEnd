@@ -12,6 +12,7 @@ import { MoviedetailsComponent } from './moviedetails/moviedetails.component';
 import { RatemovieComponent } from './ratemovie/ratemovie.component';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './services/auth.interceptor';
+import { ChatbotComponent } from './chatbot/chatbot.component';
 
 
 @NgModule({
@@ -21,7 +22,8 @@ import { AuthInterceptor } from './services/auth.interceptor';
     SignupComponent,
     LoginComponent,
     MoviedetailsComponent,
-    RatemovieComponent
+    RatemovieComponent,
+    ChatbotComponent
   ],
   imports: [
     BrowserModule,
