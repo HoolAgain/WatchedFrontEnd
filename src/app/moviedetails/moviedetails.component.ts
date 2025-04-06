@@ -182,4 +182,64 @@ export class MoviedetailsComponent implements OnInit {
       }
     }, 0);
   }
+
+
+  isAdmin(): boolean {
+    return localStorage.getItem('userClass') === 'admin';
+  }
+
+  // POST HELPERS
+  // Called when an admin clicks "Edit" on a post.
+  enablePostEdit(post: any): void {
+    post.editMode = true;
+    post.editContent = post.content; // Pre-fill with the current content.
+  }
+
+  cancelPostEdit(post: any): void {
+    post.editMode = false;
+  }
+
+  submitPostEdit(post: any): void {
+    const updateRequest = {
+      title: post.title, // Optionally allow title edits too.
+      content: post.editContent
+    };
+
+    this.postService.updatePost(post.postId, updateRequest).subscribe({
+      next: (updatedPost) => {
+        post.content = updatedPost.content; // This should now include the appended admin signature.
+        post.editMode = false;
+      },
+      error: (err) => {
+        console.error("Error updating post", err);
+      }
+    });
+  }
+
+  // COMMENT HELPERS
+  // Called when an admin clicks "Edit" on a comment.
+  enableCommentEdit(comment: any): void {
+    comment.editMode = true;
+    comment.editContent = comment.content; // Pre-fill with the current content.
+  }
+
+  // Cancel editing a comment.
+  cancelCommentEdit(comment: any): void {
+    comment.editMode = false;
+  }
+
+  // Submit the edited comment.
+  submitCommentEdit(comment: any): void {
+    const updateData = { content: comment.editContent };
+    this.commentService.updateComment(comment.commentId, updateData).subscribe({
+      next: (updatedComment) => {
+        // Update comment content and exit edit mode.
+        comment.content = updatedComment.content;
+        comment.editMode = false;
+      },
+      error: (error) => {
+        console.error("Error updating comment", error);
+      }
+    });
+  }
 }

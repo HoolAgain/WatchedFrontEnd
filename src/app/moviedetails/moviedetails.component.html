@@ -46,19 +46,40 @@
             {{ post.hasLiked ? 'Unlike' : 'Like' }}
           </button>
           <button (click)="showCommentForm(post); $event.stopPropagation()">Comment</button>
+          <button *ngIf="isAdmin()" (click)="enablePostEdit(post); $event.stopPropagation()">Edit</button>
         </div>
       </div>
       <div class="post-body" [hidden]="!post.expanded">
-        <p>{{ post.content }}</p>
+        <!-- Post Display mode -->
+        <div *ngIf="!post.editMode">
+          <p>{{ post.content }}</p>
+        </div>
+        <!-- Post Edit mode -->
+        <div *ngIf="post.editMode">
+          <textarea [(ngModel)]="post.editContent"></textarea>
+          <button (click)="submitPostEdit(post)">Submit Edit</button>
+          <button (click)="cancelPostEdit(post)">Cancel</button>
+        </div>
         <!-- Comments Section -->
         <div class="comments-section">
           <h5>Comments</h5>
           <div *ngFor="let comment of (post.comments?.$values || post.comments)" class="comment-card">
             <div class="comment-content">
-              {{ comment.content }}
+              <!-- Display mode -->
+              <div *ngIf="!comment.editMode">
+                {{ comment.content }}
+              </div>
+              <!-- Edit mode -->
+              <div *ngIf="comment.editMode">
+                <textarea [(ngModel)]="comment.editContent"></textarea>
+                <button (click)="submitCommentEdit(comment)">Submit Edit</button>
+                <button (click)="cancelCommentEdit(comment)">Cancel</button>
+              </div>
             </div>
             <div class="comment-meta">
               Posted by: {{ comment.username }}
+              <!-- Show "Edit" button only if the current user is admin and not already editing -->
+              <button *ngIf="isAdmin() && !comment.editMode" (click)="enableCommentEdit(comment)">Edit</button>
             </div>
           </div>
         </div>

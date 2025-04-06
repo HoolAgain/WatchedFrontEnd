@@ -13,28 +13,26 @@ export class AuthService {
   //used for reoccuring method after the time of 15min for the refresh token to work
   private refreshSubscription: Subscription | null = null;
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router) { }
 
   //signup auth link to backend
   signup(signupData: { username: string; email: string; passwordHash: string; fullName: string; phoneNumber: string; address: string }): Observable<any> {
     return this.http.post(`${this.apiUrl}/signup`, signupData);
   }
-  
 
-  //login auth to link backend
+
   login(loginData: { username: string; passwordHash: string }): Observable<any> {
-    //pipe used to concat the username and password with the storedTokens and the refresh
     return this.http.post(`${this.apiUrl}/login`, loginData).pipe(
-      //tap used to allow to store and modify data not in the observable
       tap((response: any) => {
-        //store tokens
-        this.storeTokens({ token: response.token, refreshToken: response.refreshToken, userClass: "member"});
+        // Store tokens and admin flag based on response
+        const userClass = response.isAdmin ? "admin" : "member";
+        this.storeTokens({ token: response.token, refreshToken: response.refreshToken, userId: response.userId, userClass });
         console.log("Login successful");
-        //used to start token refresh
         this.startTokenRefresh();
       })
     );
   }
+
 
   //guest login api
   guestLogin(): Observable<any> {
@@ -42,13 +40,13 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/guest`, {}).pipe(
       //tap to get all those tokens and ids
       tap((response: any) => {
-        this.storeTokens({ token: response.token, refreshToken: response.refreshToken, userId: response.userId, userClass: 'guest'});
+        this.storeTokens({ token: response.token, refreshToken: response.refreshToken, userId: response.userId, userClass: 'guest' });
         //start token refresh
         this.startTokenRefresh();
       })
     );
   }
-  
+
 
   startTokenRefresh() {
     //if refresh token exists, unsubscribe to restart this proccess
@@ -66,8 +64,8 @@ export class AuthService {
         });
       });
   }
-  
-//refresh login
+
+  //refresh login
   refreshToken(): Observable<any> {
     //call get methods
     const refreshToken = this.getRefreshToken();
@@ -114,20 +112,20 @@ export class AuthService {
   }
 
   getUserId(): string | null {
-    return localStorage.getItem('userId'); 
+    return localStorage.getItem('userId');
   }
 
   getUserClass(): string | null {
     return localStorage.getItem('userClass');
   }
-  
+
   logout(): void {
     localStorage.removeItem('token');
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('userId');
     localStorage.removeItem('userClass');
-    
+
     console.log("Logged out successfully.");
   }
-  
+
 }
