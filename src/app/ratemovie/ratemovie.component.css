@@ -1,0 +1,85 @@
+.header {
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: flex-start;
+  }
+  
+  .header button {
+    background-color: var(--accent-yellow);
+    color: var(--primary-bg);
+    font-weight: bold;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 10px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.3s ease;
+  }
+  
+  .header button:hover {
+    background-color: #e6bf00;
+    color: var(--text-light);
+  }
+  
+  .add-rating {
+    background-color: var(--card-bg);
+    color: var(--text-light);
+    padding: 2rem;
+    border-radius: 12px;
+    max-width: 600px;
+    margin: 2rem auto;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+    text-align: center;
+  }
+  
+  .add-rating h2 {
+    color: var(--accent-yellow);
+    margin-bottom: 1.5rem;
+  }
+  
+  .add-rating label {
+    color: var(--accent-yellow);
+    font-weight: bold;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  
+  .add-rating input {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    border-radius: 8px;
+    background-color: #2d2d2d;
+    border: 1px solid #444;
+    color: var(--text-light);
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .add-rating input:focus {
+    outline: none;
+    border-color: var(--accent-yellow);
+    box-shadow: 0 0 4px var(--accent-yellow);
+  }
+  
+  .add-rating button {
+    background-color: var(--accent-yellow);
+    color: var(--primary-bg);
+    padding: 0.7rem 1.5rem;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 1rem;
+  }
+  
+  .add-rating button:hover {
+    background-color: #e6bf00;
+    color: var(--text-light);
+  }
+  
+  .add-rating p {
+    margin-top: 1.5rem;
+    font-size: 1rem;
+    color: var(--text-light);
+  }

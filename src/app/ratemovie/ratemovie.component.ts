@@ -23,6 +23,11 @@ export class RatemovieComponent {
   }
   
   submitRating(): void {
+
+    if (this.rating < 1 || this.rating > 10) {
+      this.message = 'Please enter a number between 1 and 10.';
+      return;
+    }
     //rate movie api
     this.movieService.rateMovie(this.movieId, this.rating).subscribe(
       response => {
@@ -34,5 +39,10 @@ export class RatemovieComponent {
         this.message = error.error.message || 'An error occurred while submitting the rating';
       }
     );
+  }
+
+    
+  goBack() {
+    this.router.navigate(['/']); 
   }
 }  

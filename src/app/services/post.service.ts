@@ -12,7 +12,7 @@ export interface CreatePostRequest {
     providedIn: 'root'
 })
 export class PostService {
-    private apiUrl = 'http://localhost:5238/api/posts'; // adjust port if needed
+    private apiUrl = 'http://localhost:5238/api/posts';
 
     constructor(private http: HttpClient) { }
 

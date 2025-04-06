@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { ChatService } from '../services/chatbot.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-chatbot',
@@ -12,7 +13,11 @@ export class ChatbotComponent {
   response: string = '';
   loading: boolean = false;
 
-  constructor(private chatService: ChatService) {}
+  constructor(private chatService: ChatService, private router: Router) {}
+
+  goHome(): void {
+    this.router.navigate(['/']);
+  }
 
   sendPrompt() {
     this.loading = true;

@@ -1,3 +1,7 @@
+<div class="header">
+  <button class="back-btn" (click)="goBack()">Return Home</button>
+</div>
+
 <div class="signup-container">
     <h2>Sign Up</h2>
     <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
@@ -63,5 +67,4 @@
     </form>
   
     <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
-    <button class="back-btn" (click)="goBack()">Back to Home</button>
   </div>

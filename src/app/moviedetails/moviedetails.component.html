@@ -10,7 +10,9 @@
       <h2>{{ movie.title }} ({{ movie.year }})</h2>
       <p><strong>Genre:</strong> {{ movie.genre }}</p>
       <p><strong>Director:</strong> {{ movie.director }}</p>
-      <p><strong>Average Rating:</strong> {{ movie.averageRating }}/10</p>
+      <p><strong>Average Rating:</strong> {{ movie.averageRating | number: '1.1-1' }}/10</p>
+      <p><strong>Actors:</strong> {{ movie.actors }}</p>
+      <p><strong>Description:</strong> {{ movie.plot }}</p>
       <a [routerLink]="['/addrating', movie.movieId]">Rate Movie!</a>
     </div>
   </div>

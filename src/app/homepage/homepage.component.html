@@ -23,6 +23,6 @@
     <h3>{{ movie.title }} ({{ movie.year }})</h3>
     <p><strong>Genre:</strong> {{ movie.genre }}</p>
     <p><strong>Director:</strong> {{ movie.director }}</p>
-    <p><strong>Rating:</strong> {{ movie.averageRating}}/10</p>
+    <p><strong>Rating:</strong> {{ movie.averageRating | number: '1.1-1'}}/10</p>
   </div>
 </div>

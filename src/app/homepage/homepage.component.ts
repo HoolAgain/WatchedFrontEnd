@@ -67,5 +67,6 @@ export class HomepageComponent implements OnInit{
   //logout function from auth service
   logout(): void {
     this.authService.logout();
+    this.isLoggedIn = false; 
   }
 }
