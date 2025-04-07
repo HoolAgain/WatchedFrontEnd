@@ -13,6 +13,7 @@ import { RatemovieComponent } from './ratemovie/ratemovie.component';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AuthInterceptor } from './services/auth.interceptor';
 import { ChatbotComponent } from './chatbot/chatbot.component';
+import { AdminReportsComponent } from './admin/admin-reports/admin-reports.component';
 
 
 @NgModule({
@@ -23,7 +24,8 @@ import { ChatbotComponent } from './chatbot/chatbot.component';
     LoginComponent,
     MoviedetailsComponent,
     RatemovieComponent,
-    ChatbotComponent
+    ChatbotComponent,
+    AdminReportsComponent
   ],
   imports: [
     BrowserModule,

@@ -22,4 +22,13 @@ export class CommentService {
     getCommentsForPost(postId: number): Observable<any> {
         return this.http.get(`${this.apiUrl}/post/${postId}`);
     }
+
+    updateComment(commentId: number, updateData: any): Observable<any> {
+        return this.http.put(`${this.apiUrl}/${commentId}`, updateData);
+    }
+
+    deleteComment(commentId: number): Observable<any> {
+        return this.http.delete(`${this.apiUrl}/${commentId}`);
+    }
+
 }

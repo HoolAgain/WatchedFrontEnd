@@ -1,9 +1,9 @@
 :root {
-  --primary-bg: #121d3b;      
-  --card-bg: #1a1a3b;          
-  --accent-yellow: #ffd500;     
-  --accent-grey: #5e4b8b;   
-  --text-light: #f0f8ff;     
+  --primary-bg: #121d3b;
+  --card-bg: #1a1a3b;
+  --accent-yellow: #ffd500;
+  --accent-grey: #5e4b8b;
+  --text-light: #f0f8ff;
 }
 
 body {
@@ -12,4 +12,21 @@ body {
   font-family: 'Segoe UI', sans-serif;
   margin: 0;
   padding: 0;
+}
+
+.action-button {
+  background-color: transparent;
+  border: 1px solid var(--accent-yellow);
+  color: var(--accent-yellow);
+  border-radius: 8px;
+  padding: 0.4rem 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-left: 0.5rem;
+}
+
+.action-button:hover {
+  background-color: var(--accent-yellow);
+  color: var(--primary-bg);
 }

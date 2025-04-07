@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { MovieService } from '../services/movies.service';
-import { AuthService } from '../services/auth.service'; 
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-homepage',
@@ -8,14 +8,14 @@ import { AuthService } from '../services/auth.service';
   templateUrl: './homepage.component.html',
   styleUrl: './homepage.component.css'
 })
-export class HomepageComponent implements OnInit{
+export class HomepageComponent implements OnInit {
   //on initialize create movies array
   movies: any[] = [];
   //create a bool
-  isLoggedIn = false; 
+  isLoggedIn = false;
 
   //get services
-  constructor(private movieService: MovieService,  private authService: AuthService) {}
+  constructor(private movieService: MovieService, private authService: AuthService) { }
 
   //on init get the movies, and 
   ngOnInit(): void {
@@ -25,7 +25,7 @@ export class HomepageComponent implements OnInit{
       this.isLoggedIn = true;
     } else {
       this.isLoggedIn = false;
-    }    
+    }
     this.checkMovies();
   }
 
@@ -35,7 +35,7 @@ export class HomepageComponent implements OnInit{
     this.movieService.getMovies().subscribe(
       (data: any) => {
         //extract json if not make array of errors
-        this.movies = data?.$values || []; 
+        this.movies = data?.$values || [];
 
         //if no movies call fetchmovies
         if (this.movies.length === 0) {
@@ -49,7 +49,7 @@ export class HomepageComponent implements OnInit{
     );
   }
 
-  
+
   fetchMovies(): void {
     //fetch movies
     this.movieService.fetchMovies().subscribe(
@@ -64,9 +64,13 @@ export class HomepageComponent implements OnInit{
     );
   }
 
+  isAdmin(): boolean {
+    return localStorage.getItem('userClass') === 'admin';
+  }
+
   //logout function from auth service
   logout(): void {
     this.authService.logout();
-    this.isLoggedIn = false; 
+    this.isLoggedIn = false;
   }
 }
