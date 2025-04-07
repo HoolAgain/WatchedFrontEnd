@@ -1,0 +1,225 @@
+:root {
+  --primary-bg: #121d3b;
+  --card-bg: #1a1a3b;
+  --accent-yellow: #ffd500;
+  --text-light: #f0f8ff;
+}
+
+.movie-details-container {
+  padding: 2rem;
+  background-color: var(--primary-bg);
+  color: var(--text-light);
+}
+.header {
+  padding: 1.5rem 2rem;
+  display: flex;
+  justify-content: flex-start;
+}
+
+.header button {
+  background-color: var(--accent-yellow);
+  color: var(--primary-bg);
+  font-weight: bold;
+  border: none;
+  padding: 0.6rem 1.2rem;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: 0.3s ease;
+  font-size: 1rem;
+}
+
+.header button:hover {
+  background-color: #e6bf00;
+  color: var(--text-light);
+}
+
+.movie-info {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-bottom: 2rem;
+}
+
+.movie-poster {
+  max-width: 250px;
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.6);
+}
+
+.movie-card {
+  flex: 1;
+  background-color: var(--card-bg);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 2px solid var(--accent-yellow);
+}
+
+.movie-card h2 {
+  color: var(--accent-yellow);
+  margin-bottom: 1rem;
+}
+
+.movie-card p {
+  margin: 0.4rem 0;
+}
+
+.movie-card a {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background-color: var(--accent-yellow);
+  color: var(--primary-bg);
+  border-radius: 10px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.movie-card a:hover {
+  background-color: #e6bf00;
+  color: var(--text-light);
+}
+
+form {
+  background-color: var(--card-bg);
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 2px solid var(--accent-yellow);
+  margin-bottom: 2rem;
+  color: var(--text-light);
+}
+
+form label {
+  color: var(--accent-yellow);
+  font-weight: bold;
+  display: block;
+  margin-top: 1rem;
+}
+
+form input,
+form textarea {
+  width: 100%;
+  padding: 0.7rem;
+  margin-top: 0.5rem;
+  border-radius: 8px;
+  border: 1px solid #444;
+  background-color: #2d2d2d;
+  color: var(--text-light);
+  font-size: 1rem;
+}
+
+form button {
+  margin-top: 1rem;
+  background-color: var(--accent-yellow);
+  color: var(--primary-bg);
+  border: none;
+  border-radius: 10px;
+  padding: 0.6rem 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+form button:hover {
+  background-color: #e6bf00;
+  color: var(--text-light);
+}
+
+.posts-section h3 {
+  color: var(--accent-yellow);
+}
+
+.post-card {
+  background-color: var(--card-bg);
+  padding: 1rem;
+  border-radius: 12px;
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--accent-yellow);
+}
+
+.post-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  margin-bottom: 0.5rem;
+}
+
+.post-header-info h4 {
+  color: var(--accent-yellow);
+  margin: 0;
+}
+
+.post-header-info p {
+  font-size: 0.9rem;
+  color: #aaa;
+  margin: 0;
+}
+
+.post-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.post-actions button {
+  background-color: transparent;
+  border: 1px solid var(--accent-yellow);
+  color: var(--accent-yellow);
+  border-radius: 8px;
+  padding: 0.4rem 1rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.post-actions button:hover {
+  background-color: var(--accent-yellow);
+  color: var(--primary-bg);
+}
+
+.post-body {
+  margin-top: 1rem;
+}
+
+.comment-card {
+  background-color: #2d2d2d;
+  padding: 0.7rem;
+  border-radius: 10px;
+  margin-top: 0.5rem;
+  color: var(--text-light);
+}
+
+.comment-meta {
+  font-size: 0.85rem;
+  color: #bbb;
+  margin-top: 0.3rem;
+}
+
+.comment-form {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.comment-form input {
+  flex: 1;
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: 1px solid #444;
+  background-color: #2d2d2d;
+  color: var(--text-light);
+}
+
+.comment-form button {
+  background-color: var(--accent-yellow);
+  color: var(--primary-bg);
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 10px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.comment-form button:hover {
+  background-color: #e6bf00;
+  color: var(--text-light);
+}

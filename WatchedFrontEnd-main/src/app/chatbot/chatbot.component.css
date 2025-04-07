@@ -1,0 +1,91 @@
+.chatbot {
+  background-color: var(--card-bg); 
+    color: var(--text-light);
+    padding: 2rem;
+    border-radius: 12px;
+    max-width: 700px;
+    margin: 2rem auto;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  }
+  
+  .chatbot h2 {
+    color: var(--accent-yellow);
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+  
+  .chatbot textarea {
+    width: 100%;
+    height: 120px;
+    padding: 1rem;
+    background-color: #2d2d2d;
+    color: var(--text-light);
+    border: 1px solid #444;
+    border-radius: 12px;
+    font-size: 1rem;
+    resize: vertical;
+    margin-bottom: 1rem;
+    box-sizing: border-box;
+  }
+  
+  .chatbot button {
+    background-color: var(--accent-yellow);
+    color: var(--primary-bg);
+    padding: 0.7rem 1.5rem;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 1rem;
+  }
+  
+  .chatbot button:hover:enabled {
+    background-color: #e6bf00;
+    color: var(--text-light);
+  }
+  
+  .chatbot button:disabled {
+    background-color: #555;
+    color: #999;
+    cursor: not-allowed;
+  }
+  
+  .chatbot div[ngIf] {
+    margin-top: 1.5rem;
+  }
+  
+  .chatbot h4 {
+    color: var(--accent-yellow);
+    margin-bottom: 0.5rem;
+  }
+  
+  .chatbot p {
+    background-color: var(--card-bg);
+    padding: 1rem;
+    border-radius: 10px;
+    border: 1px solid var(--accent-yellow);
+  }
+  
+  .header {
+    padding: 1.5rem 2rem;
+    display: flex;
+    justify-content: flex-start;
+  }
+  
+  .header button {
+    background-color: var(--accent-yellow);
+    color: var(--primary-bg);
+    font-weight: bold;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 10px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: 0.3s ease;
+  }
+  
+  .header button:hover {
+    background-color: #e6bf00;
+    color: var(--text-light);
+  }

@@ -1,0 +1,114 @@
+<div class="header">
+  <button (click)="goHome()">Return Home</button>
+</div>
+
+<div *ngIf="movie" class="movie-details-container">
+  <!-- Movie Info Section -->
+  <div class="movie-info">
+    <img class="movie-poster" [src]="movie.posterUrl" alt="{{ movie.title }}">
+    <div class="movie-card">
+      <h2>{{ movie.title }} ({{ movie.year }})</h2>
+      <p><strong>Genre:</strong> {{ movie.genre }}</p>
+      <p><strong>Director:</strong> {{ movie.director }}</p>
+      <p><strong>Average Rating:</strong> {{ movie.averageRating | number: '1.1-1' }}/10</p>
+      <p><strong>Actors:</strong> {{ movie.actors }}</p>
+      <p><strong>Description:</strong> {{ movie.plot }}</p>
+      <a [routerLink]="['/addrating', movie.movieId]">Rate Movie!</a>
+    </div>
+  </div>
+
+  <!-- Post Creation Form -->
+  <h3>Leave a Post</h3>
+  <form (ngSubmit)="createPost()">
+    <div>
+      <label for="postTitle">Title</label>
+      <input type="text" id="postTitle" [(ngModel)]="newPostTitle" name="postTitle" required>
+    </div>
+    <div>
+      <label for="postContent">Content</label>
+      <textarea id="postContent" [(ngModel)]="newPostContent" name="postContent" required></textarea>
+    </div>
+    <button type="submit">Submit Post</button>
+  </form>
+
+  <!-- Posts List -->
+  <div class="posts-section">
+    <h3>Posts</h3>
+    <div *ngFor="let post of posts" class="post-card">
+      <div class="post-header" (click)="togglePost(post)">
+        <div class="post-header-info">
+          <h4>{{ post.title }}</h4>
+          <p>Posted by: {{ post.username }}</p>
+        </div>
+        <div class="post-actions">
+          <span class="like-count">{{ post.likeCount || 0 }} Likes</span>
+          <button class="action-button" (click)="toggleLike(post); $event.stopPropagation()">
+            {{ post.hasLiked ? 'Unlike' : 'Like' }}
+          </button>
+          <button class="action-button" (click)="showCommentForm(post); $event.stopPropagation()">
+            Comment
+          </button>
+          <!-- Show Edit button if current user is admin or owner and not already editing -->
+          <button *ngIf="(isAdmin() || isOwner(post)) && !post.editMode" class="action-button"
+            (click)="enablePostEdit(post); $event.stopPropagation()">
+            Edit
+          </button>
+          <!-- Show Delete button if current user is admin or owner -->
+          <button *ngIf="(isAdmin() || isOwner(post))" class="action-button"
+            (click)="deletePost(post); $event.stopPropagation()">
+            Delete
+          </button>
+        </div>
+
+      </div>
+      <div class="post-body" [hidden]="!post.expanded">
+        <!-- Post Display mode -->
+        <div *ngIf="!post.editMode">
+          <p>{{ post.content }}</p>
+        </div>
+        <!-- Post Edit mode -->
+        <div *ngIf="post.editMode">
+          <textarea [(ngModel)]="post.editContent"></textarea>
+          <button (click)="submitPostEdit(post)">Submit Edit</button>
+          <button (click)="cancelPostEdit(post)">Cancel</button>
+        </div>
+        <!-- Comments Section -->
+        <div class="comments-section">
+          <h5>Comments</h5>
+          <div *ngFor="let comment of (post.comments?.$values || post.comments)" class="comment-card">
+            <div class="comment-content">
+              <!-- Display mode -->
+              <div *ngIf="!comment.editMode">
+                {{ comment.content }}
+              </div>
+              <!-- Edit mode -->
+              <div *ngIf="comment.editMode">
+                <textarea [(ngModel)]="comment.editContent"></textarea>
+                <button (click)="submitCommentEdit(comment, post)">Submit Edit</button>
+                <button (click)="cancelCommentEdit(comment)">Cancel</button>
+              </div>
+            </div>
+            <div class="comment-meta">
+              Posted by: {{ comment.username }}
+              <!-- Show Edit button for admin or owner -->
+              <button *ngIf="(isAdmin() || isCommentOwner(comment)) && !comment.editMode" class="action-button"
+                (click)="enableCommentEdit(comment)">
+                Edit
+              </button>
+              <!-- Show Delete button for admin or owner -->
+              <button *ngIf="(isAdmin() || isCommentOwner(comment))" class="action-button"
+                (click)="deleteComment(comment, post)">
+                Delete
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="comment-form" *ngIf="post.showCommentForm">
+          <input type="text" id="comment-input-{{ post.postId }}" placeholder="Add a comment..."
+            [(ngModel)]="post.newCommentContent">
+          <button (click)="addComment(post)">Add Comment</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

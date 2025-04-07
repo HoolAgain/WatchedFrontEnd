@@ -1,0 +1,19 @@
+<div class="header">
+  <button (click)="goHome()">Return Home</button>
+</div>
+
+<div class="chatbot">
+    <h2>Watched App Chatbot</h2>
+  
+    <textarea [(ngModel)]="prompt" placeholder="Ask a question about the app..."></textarea>
+    <br />
+    <button (click)="sendPrompt()" [disabled]="loading">Ask</button>
+  
+    <div *ngIf="loading">Thinking...</div>
+  
+    <div *ngIf="response">
+      <h4>AI says:</h4>
+      <p>{{ response }}</p>
+    </div>
+  </div>
+  

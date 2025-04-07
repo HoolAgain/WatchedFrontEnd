@@ -1,0 +1,27 @@
+<nav class="navbar">
+  <h1>Watched Movies</h1>
+  <div class="nav-buttons">
+    <ng-container *ngIf="!isLoggedIn; else loggedInTemplate">
+      <a routerLink="/chatbot">Chatbot Support</a>
+      <a routerLink="/signup">Sign Up</a>
+      <a routerLink="/login">Login</a>
+    </ng-container>
+    <ng-template #loggedInTemplate>
+      <a routerLink="/chatbot">Chatbot Support</a>
+      <a *ngIf="isAdmin()" routerLink="/admin-reports">Site Analytics</a>
+      <button (click)="logout()">Logout</button>
+    </ng-template>
+  </div>
+</nav>
+
+<h2>Movie List</h2>
+
+<div class="movie-grid">
+  <div class="movie-card" *ngFor="let movie of movies" [routerLink]="['/details', movie.movieId]">
+    <img [src]="movie.posterUrl" alt="{{ movie.title }}">
+    <h3>{{ movie.title }} ({{ movie.year }})</h3>
+    <p><strong>Genre:</strong> {{ movie.genre }}</p>
+    <p><strong>Director:</strong> {{ movie.director }}</p>
+    <p><strong>Rating:</strong> {{ movie.averageRating | number: '1.1-1'}}/10</p>
+  </div>
+</div>

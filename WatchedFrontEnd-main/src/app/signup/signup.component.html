@@ -1,0 +1,70 @@
+<div class="header">
+  <button class="back-btn" (click)="goBack()">Return Home</button>
+</div>
+
+<div class="signup-container">
+    <h2>Sign Up</h2>
+    <form [formGroup]="signupForm" (ngSubmit)="onSubmit()">
+      
+      <div class="form-group">
+        <label for="username">Username:</label>
+        <input id="username" type="text" formControlName="username" required />
+        <p class="error" *ngIf="signupForm.get('username')?.invalid && signupForm.get('username')?.touched">
+          Username is required.
+        </p>
+      </div>
+  
+      <div class="form-group">
+        <label for="email">Email:</label>
+        <input id="email" type="email" formControlName="email" required />
+        <p class="error" *ngIf="signupForm.get('email')?.invalid && signupForm.get('email')?.touched">
+          Enter a valid email.
+        </p>
+      </div>
+  
+      <div class="form-group">
+        <label for="fullName">Full Name:</label>
+        <input id="fullName" type="text" formControlName="fullName" required />
+        <p class="error" *ngIf="signupForm.get('fullName')?.invalid && signupForm.get('fullName')?.touched">
+          Full Name is required.
+        </p>
+      </div>
+  
+      <div class="form-group">
+        <label for="phoneNumber">Phone Number:</label>
+        <input id="phoneNumber" type="text" formControlName="phoneNumber" required />
+        <p class="error" *ngIf="signupForm.get('phoneNumber')?.invalid && signupForm.get('phoneNumber')?.touched">
+          Phone Number must be 10 in length.
+        </p>
+      </div>
+  
+      <div class="form-group">
+        <label for="address">Address:</label>
+        <input id="address" type="text" formControlName="address" required />
+        <p class="error" *ngIf="signupForm.get('address')?.invalid && signupForm.get('address')?.touched">
+          Address is required.
+        </p>
+      </div>
+  
+      <div class="form-group">
+        <label for="password">Password:</label>
+        <input id="password" type="password" formControlName="password" required />
+        <p class="error" *ngIf="signupForm.get('password')?.invalid && signupForm.get('password')?.touched">
+          Password must be at least 6 characters.
+        </p>
+  
+      </div>
+  
+      <div class="form-group">
+        <label for="confirmPassword">Confirm Password:</label>
+        <input id="confirmPassword" type="password" formControlName="confirmPassword" required />
+        <p class="error" *ngIf="signupForm.hasError('passwordMismatch')">
+          Passwords do not match!
+        </p>
+      </div>
+  
+      <button type="submit" [disabled]="signupForm.invalid">Sign Up</button>
+    </form>
+  
+    <p *ngIf="errorMessage" class="error">{{ errorMessage }}</p>
+  </div>
