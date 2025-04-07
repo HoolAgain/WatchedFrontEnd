@@ -1,4 +1,5 @@
 <div class="admin-reports-container">
+    <!-- Admin Activity Logs Table -->
     <h2>Admin Activity Logs</h2>
     <button class="back-btn" (click)="goHome()">Return Home</button>
 
@@ -12,7 +13,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let log of adminLogs">
+            <tr *ngFor="let log of pagedAdminLogs">
                 <td>{{ log.createdAt | date: 'medium' }}</td>
                 <td>{{ log.adminName }}</td>
                 <td>{{ log.action }}</td>
@@ -30,4 +31,63 @@
             </tr>
         </tbody>
     </table>
+
+    <!-- Pagination summary for Admin Logs -->
+    <div class="pagination-summary">
+        Showing results
+        {{ (adminPageIndex * pageSize) + 1 }} -
+        {{ ((adminPageIndex * pageSize) + pageSize) > adminLogs.length ? adminLogs.length : ((adminPageIndex * pageSize)
+        + pageSize) }}
+        of {{ adminLogs.length }}
+    </div>
+
+    <div class="pagination-controls">
+        <button (click)="prevAdminPage()" [disabled]="adminPageIndex === 0">Previous</button>
+        <button (click)="nextAdminPage()" [disabled]="(adminPageIndex + 1) * pageSize >= adminLogs.length">Next</button>
+    </div>
+    <hr>
+    <h2>Site Activity</h2>
+
+    <div class="filter-controls">
+        <label for="filterSelect">Filter by time:</label>
+        <select id="filterSelect" [(ngModel)]="selectedFilter" (change)="onFilterChange()">
+            <option value="all">All Time</option>
+            <option value="past-month">Past Month</option>
+            <option value="past-2-weeks">Past 2 Weeks</option>
+        </select>
+    </div>
+
+    <table class="reports-table">
+        <thead>
+            <tr>
+                <th>Activity</th>
+                <th>Operation</th>
+                <th>Time Of</th>
+                <th>Username</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let activity of pagedSiteActivity">
+                <td>{{ activity.activity }}</td>
+                <td>{{ activity.operation }}</td>
+                <td>{{ activity.timeOf ? (activity.timeOf | date:'medium') : 'N/A' }}</td>
+                <td>{{ activity.username }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <!-- Pagination summary for Site Activity -->
+    <div class="pagination-summary">
+        Showing results
+        {{ (siteActivityPageIndex * pageSize) + 1 }} -
+        {{ ((siteActivityPageIndex * pageSize) + pageSize) > siteActivity.length ? siteActivity.length :
+        ((siteActivityPageIndex * pageSize) + pageSize) }}
+        of {{ siteActivity.length }}
+    </div>
+
+    <div class="pagination-controls">
+        <button (click)="prevSiteActivityPage()" [disabled]="siteActivityPageIndex === 0">Previous</button>
+        <button (click)="nextSiteActivityPage()"
+            [disabled]="(siteActivityPageIndex + 1) * pageSize >= siteActivity.length">Next</button>
+    </div>
 </div>

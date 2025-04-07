@@ -13,4 +13,11 @@ export class AdminService {
     getAdminLogs(): Observable<any> {
         return this.http.get(`${this.apiUrl}/logs`);
     }
+
+    getSiteActivity(filter: string): Observable<any> {
+        return this.http.get(`${this.apiUrl}/site-activity`, {
+            params: { filter }
+        });
+    }
+
 }
