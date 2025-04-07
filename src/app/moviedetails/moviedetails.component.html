@@ -46,7 +46,15 @@
             {{ post.hasLiked ? 'Unlike' : 'Like' }}
           </button>
           <button (click)="showCommentForm(post); $event.stopPropagation()">Comment</button>
-          <button *ngIf="isAdmin()" (click)="enablePostEdit(post); $event.stopPropagation()">Edit</button>
+          <!-- Show Edit button if current user is admin or owner and not already editing -->
+          <button *ngIf="(isAdmin() || isOwner(post)) && !post.editMode"
+            (click)="enablePostEdit(post); $event.stopPropagation()">
+            Edit
+          </button>
+          <!-- Show Delete button if current user is admin or owner -->
+          <button *ngIf="(isAdmin() || isOwner(post))" (click)="deletePost(post); $event.stopPropagation()">
+            Delete
+          </button>
         </div>
       </div>
       <div class="post-body" [hidden]="!post.expanded">
@@ -72,14 +80,21 @@
               <!-- Edit mode -->
               <div *ngIf="comment.editMode">
                 <textarea [(ngModel)]="comment.editContent"></textarea>
-                <button (click)="submitCommentEdit(comment)">Submit Edit</button>
+                <button (click)="submitCommentEdit(comment, post)">Submit Edit</button>
                 <button (click)="cancelCommentEdit(comment)">Cancel</button>
               </div>
             </div>
             <div class="comment-meta">
               Posted by: {{ comment.username }}
-              <!-- Show "Edit" button only if the current user is admin and not already editing -->
-              <button *ngIf="isAdmin() && !comment.editMode" (click)="enableCommentEdit(comment)">Edit</button>
+              <!-- Show Edit button for admin or owner -->
+              <button *ngIf="(isAdmin() || isCommentOwner(comment)) && !comment.editMode"
+                (click)="enableCommentEdit(comment)">
+                Edit
+              </button>
+              <!-- Show Delete button for admin or owner -->
+              <button *ngIf="(isAdmin() || isCommentOwner(comment))" (click)="deleteComment(comment, post)">
+                Delete
+              </button>
             </div>
           </div>
         </div>

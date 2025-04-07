@@ -188,6 +188,18 @@ export class MoviedetailsComponent implements OnInit {
     return localStorage.getItem('userClass') === 'admin';
   }
 
+
+  isOwner(post: any): boolean {
+    const userId = +localStorage.getItem('userId')!;
+    return post.userId === userId;
+  }
+
+
+  isCommentOwner(comment: any): boolean {
+    const userId = +localStorage.getItem('userId')!;
+    return comment.userId === userId;
+  }
+
   // POST HELPERS
   // Called when an admin clicks "Edit" on a post.
   enablePostEdit(post: any): void {
@@ -216,30 +228,62 @@ export class MoviedetailsComponent implements OnInit {
     });
   }
 
-  // COMMENT HELPERS
-  // Called when an admin clicks "Edit" on a comment.
-  enableCommentEdit(comment: any): void {
-    comment.editMode = true;
-    comment.editContent = comment.content; // Pre-fill with the current content.
+  // Delete a post (for admin or owner)
+  deletePost(post: any): void {
+    if (confirm('Are you sure you want to delete this post?')) {
+      this.postService.deletePost(post.postId).subscribe({
+        next: (response) => {
+          alert('Post deleted successfully.');
+          // Remove the deleted post from the posts array.
+          this.posts = this.posts.filter(p => p.postId !== post.postId);
+        },
+        error: (err) => {
+          console.error('Error deleting post:', err);
+        }
+      });
+    }
   }
 
-  // Cancel editing a comment.
+  // COMMENT HELPERS
+  enableCommentEdit(comment: any): void {
+    comment.editMode = true;
+    comment.editContent = comment.content; // Pre-fill with current content.
+  }
+
+
   cancelCommentEdit(comment: any): void {
     comment.editMode = false;
   }
 
-  // Submit the edited comment.
-  submitCommentEdit(comment: any): void {
+  submitCommentEdit(comment: any, post: any): void {
     const updateData = { content: comment.editContent };
     this.commentService.updateComment(comment.commentId, updateData).subscribe({
       next: (updatedComment) => {
-        // Update comment content and exit edit mode.
-        comment.content = updatedComment.content;
+        comment.content = updatedComment.content; // Updated content (should include signature if admin)
         comment.editMode = false;
       },
       error: (error) => {
-        console.error("Error updating comment", error);
+        console.error('Error updating comment', error);
       }
     });
   }
+
+  // Delete a comment (for admin or owner)
+  // We pass the parent post to update its local comments array.
+  deleteComment(comment: any, post: any): void {
+    if (confirm('Are you sure you want to delete this comment?')) {
+      this.commentService.deleteComment(comment.commentId).subscribe({
+        next: (response) => {
+          alert('Comment deleted successfully.');
+          // Remove the comment from the post's comments array.
+          post.comments = post.comments.filter((c: any) => c.commentId !== comment.commentId);
+        },
+        error: (err) => {
+          console.error('Error deleting comment:', err);
+        }
+      });
+    }
+  }
+
+
 }
