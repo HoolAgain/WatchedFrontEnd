@@ -1,9 +1,17 @@
 import { TestBed } from '@angular/core/testing';
 import { RouterModule } from '@angular/router';
 import { AppComponent } from './app.component';
+import { AuthService } from './services/auth.service';
 
 describe('AppComponent', () => {
+  let mockAuthService: any;
+
   beforeEach(async () => {
+    mockAuthService = {
+      getToken: jasmine.createSpy().and.returnValue(null),
+      startTokenRefresh: jasmine.createSpy()
+    };
+
     await TestBed.configureTestingModule({
       imports: [
         RouterModule.forRoot([])
@@ -11,6 +19,9 @@ describe('AppComponent', () => {
       declarations: [
         AppComponent
       ],
+      providers: [
+        { provide: AuthService, useValue: mockAuthService }
+      ]
     }).compileComponents();
   });
 
@@ -26,10 +37,21 @@ describe('AppComponent', () => {
     expect(app.title).toEqual('WatchedFrontEnd');
   });
 
-  it('should render title', () => {
+  it('should call startTokenRefresh if token exists', () => {
+    mockAuthService.getToken.and.returnValue('fake-token');
+
     const fixture = TestBed.createComponent(AppComponent);
     fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, WatchedFrontEnd');
+
+    expect(mockAuthService.startTokenRefresh).toHaveBeenCalled();
+  });
+
+  it('should not call startTokenRefresh if no token exists', () => {
+    mockAuthService.getToken.and.returnValue(null);
+
+    const fixture = TestBed.createComponent(AppComponent);
+    fixture.detectChanges();
+
+    expect(mockAuthService.startTokenRefresh).not.toHaveBeenCalled();
   });
 });
