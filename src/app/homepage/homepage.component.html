@@ -8,12 +8,11 @@
     </ng-container>
     <ng-template #loggedInTemplate>
       <a routerLink="/chatbot">Chatbot Support</a>
+      <a *ngIf="isAdmin()" routerLink="/admin-reports">Site Analytics</a>
       <button (click)="logout()">Logout</button>
     </ng-template>
   </div>
 </nav>
-
-
 
 <h2>Movie List</h2>
 
