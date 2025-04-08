@@ -2,6 +2,19 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.1.4.
 
+
+## Testing & Coverage Instructions
+
+To run unit tests and generate a code coverage report for this Angular project, follow these steps:
+
+### Install 
+```bash
+npm install
+ng test --code-coverage
+start coverage/index.html
+```
+
+
 ## Development server
 
 Before anything else open a terminal at project root and run:
