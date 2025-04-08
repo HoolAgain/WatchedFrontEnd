@@ -10,7 +10,11 @@ To run unit tests and generate a code coverage report for this Angular project, 
 ### Install 
 ```bash
 npm install
+```
+```bash
 ng test --code-coverage
+```
+```bash
 start coverage/index.html
 ```
 
